@@ -8,6 +8,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Media;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleApplication3
@@ -27,6 +28,7 @@ namespace ConsoleApplication3
             First_Load();
 
             Console.WriteLine($"connection bd - {(CheckDbConnection() == true ? "open" : "closed")}");
+
             ComWorking();
 
             Console.ReadKey();
@@ -123,12 +125,14 @@ namespace ConsoleApplication3
             //mySerialPort.Handshake = Handshake.RequestToSend;
             //mySerialPort.DtrEnable = true;
             //mySerialPort.RtsEnable = true;
-            mySerialPort.NewLine = System.Environment.NewLine;
+            mySerialPort.NewLine = Environment.NewLine;
             // mySerialPort.Open();
-            try { 
-                mySerialPort.Open(); 
+            try
+            {
+                mySerialPort.Open();
             }
-            catch {
+            catch
+            {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Port closed");
                 Console.ForegroundColor = ConsoleColor.White;
@@ -158,7 +162,9 @@ namespace ConsoleApplication3
 
 
             Console.ForegroundColor = ConsoleColor.Red;
-            workWithDataCom(indata);
+
+            workWithDataComAsync(indata);
+
             Console.ForegroundColor = ConsoleColor.White;
 
 
@@ -186,7 +192,7 @@ namespace ConsoleApplication3
 
         }
 
-        private static void workWithDataCom(string line)
+        private static void workWithDataComAsync(string line)
         {
             //String[] substringsLine = line.Split('\n');
 
@@ -205,37 +211,59 @@ namespace ConsoleApplication3
             }
             else countLine++;
 
-            String[] substringsChar = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            for (int j = 0; j < substringsChar.Length; j++)
+            if (!string.IsNullOrEmpty(line) && (line.Length > 5))
             {
-                if (substringsChar[1] != "BEGIN") pr = true;
-                else pr = false;
-            }
-
-            if (pr) lineAll += line;
-            else lineAll = null;
-
-            if (!string.IsNullOrEmpty(lineAll) && (countLine != 0))
-            {
-                String[] substringsCharAll = lineAll.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                for (int i = 0; i < substringsCharAll.Length; i++)
+                String[] substringsChar = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                for (int j = 0; j < substringsChar.Length; j++)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write($"[{i}] {substringsCharAll[i]}  ");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    if (substringsChar[1] != "BEGIN") pr = true;
+                    else pr = false;
                 }
-                
-                //создание и передача модели в бд
-                Model model = new Model(type: substringsCharAll[0], code: substringsCharAll[1], goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4], value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]);
-               // Console.WriteLine(QueryGet(model).Query);
-                UpdateRowBd(QueryGet(model).Query);
-            }
-            Console.WriteLine();
 
+                if (pr) lineAll += line;
+                else lineAll = null;
+
+                if (!string.IsNullOrEmpty(lineAll) && (countLine != 0))
+                {
+                    String[] substringsCharAll = lineAll.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < substringsCharAll.Length; i++)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write($"[{i}] {substringsCharAll[i]}  ");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    //создание и передача модели в бд
+                    Model model = new Model(type: substringsCharAll[0], code: substringsCharAll[1], goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                    // Console.WriteLine(QueryGet(model).Query);
+
+                    // UpdateRowBd(QueryGet(model).Query); //!!!!!!!
+
+                    string query = QueryGet(model)?.Query;
+                    if (!string.IsNullOrEmpty(query)) UpdateRowBd_(QueryGet(model).Query);
+                    //else Beep(3);
+                }
+                Console.WriteLine();
+            }
         }
+
+
+
+        // определение асинхронного метода
+        static async void UpdateRowBd_(string query)
+        {
+            Console.WriteLine("Начало метода async"); // выполняется синхронно
+            await Task.Run(() => UpdateRowBd(query));                // выполняется асинхронно
+            Console.WriteLine("Конец метода async");
+        }
+
+
 
         private static void UpdateRowBd(string query)
         {
+            //Thread.Sleep(500);???
+
+
             FbConnection conn = GetConnection();
             FbTransaction fbt = conn.BeginTransaction();
             try
@@ -246,10 +274,16 @@ namespace ConsoleApplication3
                     int res = cmd.ExecuteNonQuery();
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
+                    if (res == 0)
+                    {
+                        Beep(1, query);
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
                     Console.WriteLine($"Update {res}");
+                    if (res == 0) Beep(1, query);
                     Console.ForegroundColor = ConsoleColor.White;
-                    Log.Write(query);
-                    //fbt.Commit();
+                    Log.Write($"/n{query}");
+                    fbt.Commit();
                 }
             }
             catch (Exception ex)
@@ -257,11 +291,11 @@ namespace ConsoleApplication3
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
                 Console.ForegroundColor = ConsoleColor.White;
-                fbt.Rollback();
+                // fbt.Rollback();
             }
             finally
             {
-                fbt.Commit();
+                // fbt.Commit();
                 conn.Close();
             }
 
@@ -288,19 +322,48 @@ namespace ConsoleApplication3
             Console.WriteLine($"{query}");
         }
 
+        private static string getBarCodeCorrect(string barCode)
+        {
+            return barCode.Substring(3); ;
+        }
+
         private static QueryModel QueryGet(Model model)
         {
-            QueryModel query;
+            QueryModel query = null;
 
             switch (model.Goods)
             {
                 case "1APTT":
-                    query = (new QueryModel()
-                    {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                       "d.result_text = '" + model.Value01 + "', \n" +
-                      //"d.result_text = '777', \n" +
+                    if (model.TypeGoods == "TIME")
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result_text = '" + model.Value01 + "', \n" +
+                        //"d.result_text = '777', \n" +
+                        "d.hardware_date_updated = current_timestamp, " +
+                        "d.hardware_info = ('CC-4000') \n" +
+                        "where ID = (select R.ID  \n" +
+                        "from JOR_CHECKS_DT D  \n" +
+                        "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                        "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                        "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                        "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                         "and (D.BULB_NUM_CODE = cast('" + getBarCodeCorrect(model.Code) + "' as NAME))  \n" +
+                        //"and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
+                        "and (R.CODE_NAME = cast(  \n" +
+                        "('APTT_t') as MIDDLE_NAME))  \n" +
+                        "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+
+                    break;
+                case "1PT":
+                    if (model.TypeGoods == "TIME")
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                      "d.result_text = '" + model.Value01 + "', \n" +
                       "d.hardware_date_updated = current_timestamp, " +
                       "d.hardware_info = ('CC-4000') \n" +
                       "where ID = (select R.ID  \n" +
@@ -309,15 +372,38 @@ namespace ConsoleApplication3
                       "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
                       "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
                       "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
-                      // "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
-                      "and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
+                      "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                      // "and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
                       "and (R.CODE_NAME = cast(  \n" +
-                      "('APTT_t') as MIDDLE_NAME))  \n" +
+                      "('PT_t') as MIDDLE_NAME))  \n" +
                       "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        });
                     break;
-                case "Thrombin_T.":
-                    query = (new QueryModel()
+                case "1TT":
+                    if (model.TypeGoods == "TIME")
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                      "d.result_text = '" + model.Value01 + "', \n" +
+                      "d.hardware_date_updated = current_timestamp, " +
+                      "d.hardware_info = ('CC-4000') \n" +
+                      "where ID = (select R.ID  \n" +
+                      "from JOR_CHECKS_DT D  \n" +
+                      "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                      "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                      "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                      "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                       "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                      //  "and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
+                      "and (R.CODE_NAME = cast(  \n" +
+                      "('TT_t') as MIDDLE_NAME))  \n" +
+                      "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    break;
+                case "1FIBRINOGEN":
+                    if (model.TypeGoods == "RATIO")
+                        query = (new QueryModel()
                     {
                         Type = model.Type,
                         Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
@@ -330,49 +416,10 @@ namespace ConsoleApplication3
                       "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
                       "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
                       "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
-                      "and (D.BULB_NUM_CODE_ID = cast('" + model.Code + "' as NAME))  \n" +
+                       "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                      // "and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
                       "and (R.CODE_NAME = cast(  \n" +
-                      "('TT@s') as MIDDLE_NAME))  \n" +
-                      "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
-                    break;
-                case "PTT":
-                    query = (new QueryModel()
-                    {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                      "d.result_text = '" + model.Value01 + "', \n" +
-                      "d.hardware_date_updated = current_timestamp, " +
-                      "d.hardware_info = ('CC-4000') \n" +
-                      "where ID = (select R.ID  \n" +
-                      "from JOR_CHECKS_DT D  \n" +
-                      "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
-                      "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
-                      "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
-                      "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
-                      "and (D.BULB_NUM_CODE_ID = cast('" + model.Code + "' as NAME))  \n" +
-                      "and (R.CODE_NAME = cast(  \n" +
-                      "('APTT@s') as MIDDLE_NAME))  \n" +
-                      "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
-                    break;
-                case "Fib._g/l":
-                    query = (new QueryModel()
-                    {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                      "d.result_text = '" + model.Value01 + "', \n" +
-                      "d.hardware_date_updated = current_timestamp, " +
-                      "d.hardware_info = ('CC-4000') \n" +
-                      "where ID = (select R.ID  \n" +
-                      "from JOR_CHECKS_DT D  \n" +
-                      "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
-                      "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
-                      "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
-                      "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
-                      "and (D.BULB_NUM_CODE_ID = cast('" + model.Code + "' as NAME))  \n" +
-                      "and (R.CODE_NAME = cast(  \n" +
-                      "('FIBRINOGEN@G') as MIDDLE_NAME))  \n" +
+                      "('FIB_M') as MIDDLE_NAME))  \n" +
                       "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                     });
                     break;
@@ -384,7 +431,7 @@ namespace ConsoleApplication3
             return query;
         }
 
-        private static void Beep(int count)
+        private static void Beep(int count, string query)
         {
             int x = count;
 
@@ -395,7 +442,9 @@ namespace ConsoleApplication3
             int duration = 200;
             for (int i = 1; i <= x; i++)
             {
+                Console.WriteLine();
                 Console.Write("Beep number {0}. ", i);
+                Console.WriteLine(query);
                 Console.Beep(frequency, duration);
             }
             Console.WriteLine();
