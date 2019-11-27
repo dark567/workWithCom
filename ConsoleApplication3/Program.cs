@@ -25,9 +25,12 @@ namespace ConsoleApplication3
 
         public static void Main(string[] args)
         {
+            Console.Title = "ComRead";
             First_Load();
 
             Console.WriteLine($"connection bd - {(CheckDbConnection() == true ? "open" : "closed")}");
+
+
 
             ComWorking();
 
@@ -157,15 +160,17 @@ namespace ConsoleApplication3
             SerialPort sp = (SerialPort)sender;
             string indata = sp.ReadExisting();
             //Console.WriteLine("Data Received:");
-           // Console.Write($"{indata}");
+            // Console.Write($"{indata}");
             Log.Write(indata);
 
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            //Console.Write($"{indata}");
-             workWithDataComAsync(indata); //!!!
-
-            Console.ForegroundColor = ConsoleColor.White;
+            // Console.ForegroundColor = ConsoleColor.Red;
+            // Console.WriteLine($"[{indata.Length}], [{indata}]");
+            //Console.Write($"[{indata.Length}],{indata}");
+            //if (indata.IndexOf("CC-3003") > -1) workWithDataComAsync(indata); //!!!
+            // workWithDataComAsync(indata);
+            // Console.WriteLine(mySerialPort.ReadLine());
+            // Console.ForegroundColor = ConsoleColor.White;
 
 
 
@@ -173,20 +178,23 @@ namespace ConsoleApplication3
             //{
             //mySerialPort.WriteLine("AT+CMGL=\"ALL\"");
             //mySerialPort.WriteLine("---");
-            //System.Threading.Thread.Sleep(500);
-            //while (mySerialPort.BytesToRead > 0)
-            //{
-            //    try
-            //    {
-            //        Console.WriteLine(mySerialPort.ReadLine());
-            //        //  Console.ForegroundColor = ConsoleColor.Red;
-            //        // workWithDataCom(mySerialPort.ReadLine());
-            //        // Console.ForegroundColor = ConsoleColor.White;
-            //        Log.Write(mySerialPort.ReadLine());
-            //        //Beep(3); // потом вернуть
-            //    }
-            //    catch { }
-            //}
+            System.Threading.Thread.Sleep(1000);
+
+            while (mySerialPort.BytesToRead > 0)
+            {
+                try
+                {
+                    string line = mySerialPort.ReadLine();
+                    // Console.WriteLine(line);
+                    workWithDataComAsync(line);
+                    //  Console.ForegroundColor = ConsoleColor.Red;
+                    // workWithDataCom(mySerialPort.ReadLine());
+                    // Console.ForegroundColor = ConsoleColor.White;
+                    //Log.Write(mySerialPort.ReadLine());
+                    //Beep(3); // потом вернуть
+                }
+                catch { }
+            }
             //}
 
 
@@ -194,64 +202,71 @@ namespace ConsoleApplication3
 
         private static void workWithDataComAsync(string line)
         {
-            //String[] substringsLine = line.Split('\n');
+            // Console.WriteLine($"[{line.Length}], [{line}]");
+            //Console.WriteLine($"{line}");
 
-            //for (int i = 0; i < substringsLine.Length; i++)
-            //{
-            //    Console.WriteLine($"{i}:{substringsLine[i]}");
-            //}
             bool pr = false;
 
-            Console.WriteLine();
+            // Console.WriteLine();
 
             if (line.IndexOf("CC-3003") == 0)
             {
                 countLine = 0;
                 lineAll = null;
+              //  Console.WriteLine(line);
             }
-            else countLine++;
+            else
+            {
+                countLine++;
+                //Console.WriteLine("++");
+            }
 
             if (!string.IsNullOrEmpty(line) && (line.Length > 5))
             {
                 String[] substringsChar = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 for (int j = 0; j < substringsChar.Length; j++)
                 {
-                    if (substringsChar[1] != "BEGIN") pr = true;
-                    else pr = false;
-                }
-
-                if (pr) lineAll += line;
-                else lineAll = null;
-
-                if (!string.IsNullOrEmpty(lineAll) && (countLine != 0))
-                {
-                    String[] substringsCharAll = lineAll.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                   
-                    for (int i = 0; i < substringsCharAll.Length; i++)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write($"[{i}] {substringsCharAll[i]}  ");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-
-                    //создание и передача модели в бд
-                    Model model = new Model(type: substringsCharAll[0], code: substringsCharAll[1], goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
-
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine($"\n[0]{model.Type}, [1]{model.Code}, [2]{model.Goods}, [3]{model.TypeGoods}, [4]{model.Value01}");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    //  Console.Write ($" [{substringsChar.Length}] ");
                     Console.ForegroundColor = ConsoleColor.White;
-
-                    // Console.WriteLine(QueryGet(model).Query);
-
-                    // UpdateRowBd(QueryGet(model).Query); //!!!!!!!
-
-                    string query = QueryGet(model)?.Query;
-                    //if (!string.IsNullOrEmpty(query)) UpdateRowBd_(QueryGet(model).Query); //!!! ver1
-                    if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
-
-                    //else Beep(3);
+                    if (substringsChar.Length > 1)
+                        if (substringsChar[1] != "BEGIN") pr = true;
+                    //  else pr = false;
                 }
-                Console.WriteLine();
+
+                //if (pr) lineAll += line;
+                //else lineAll = null;
+                lineAll = line;
+
+                CreateModel(lineAll);
+                // Console.WriteLine($"lineAll: {lineAll}");
+            }
+        }
+
+        private static void CreateModel(string lineAll)
+        {
+            if (!string.IsNullOrEmpty(lineAll) /*&& (countLine != 0)*/)
+            {
+                String[] substringsCharAll = lineAll.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                //for (int i = 0; i < substringsCharAll.Length; i++)
+                //{
+                //    Console.ForegroundColor = ConsoleColor.Green;
+                //    Console.Write($"[{i}] {substringsCharAll[i]}  ");
+                //    Console.ForegroundColor = ConsoleColor.White;
+                //}
+
+                //создание и передача модели в бд
+                Model model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"\n[0]{model.Type}, [1]{model.Code}, [2]{model.Goods}, [3]{model.TypeGoods}, [4]{model.Value01}");
+                Console.ForegroundColor = ConsoleColor.White;
+
+                string query = QueryGet(model)?.Query; //!!!
+                if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
+
+                //UpdateRowBd_(model);
             }
         }
 
@@ -260,16 +275,16 @@ namespace ConsoleApplication3
         // определение асинхронного метода
         static async void UpdateRowBd_(Model query)
         {
-           // Console.WriteLine("Начало метода async"); // выполняется синхронно
+            // Console.WriteLine("Начало метода async"); // выполняется синхронно
             await Task.Run(() => UpdateRowBd(query));                // выполняется асинхронно
-           // Console.WriteLine("Конец метода async");
+                                                                     // Console.WriteLine("Конец метода async");
         }
 
 
 
         private static void UpdateRowBd(Model query)
         {
-            //Thread.Sleep(500);???
+            Thread.Sleep(500);
 
 
             FbConnection conn = GetConnection();
@@ -281,7 +296,7 @@ namespace ConsoleApplication3
                     cmd.Transaction = fbt;
                     int res = cmd.ExecuteNonQuery();
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    // Console.ForegroundColor = ConsoleColor.Yellow;
                     //if (res == 0)
                     //{
                     //    Beep(1, query);
@@ -289,15 +304,20 @@ namespace ConsoleApplication3
                     //}
 
 
-                    if (res == 0) {
+                    if (res == 0)
+                    {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Update {res}, BarCode:{getBarCodeCorrect(query.Code)}, Type {query.Type}, value {query.Value01}");
-                        Beep(1, query); 
+                        Console.WriteLine($"\nUpdate {res}, BarCode:{query.Code}, TypeGoods {query.Goods}, value {query.Value01}");
+                        Beep(1, query);
                     }
-                    else Console.WriteLine($"Update {res}, BarCode:{getBarCodeCorrect(query.Code)}, Type {query.Type}, value {query.Value01}");
-                    
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"\nUpdate {res}, BarCode:{query.Code}, TypeGoods {query.Goods}, value {query.Value01}");
+                    }
+
                     Console.ForegroundColor = ConsoleColor.White;
-                    Log.Write($"/n{getBarCodeCorrect(query.Code)}");
+                    Log.Write($"/n{query.Code}");
                     fbt.Commit();
                 }
             }
@@ -334,7 +354,7 @@ namespace ConsoleApplication3
             //    // the end of the Using block.
             //}
 
-           // Console.WriteLine($"{query}");
+            // Console.WriteLine($"{query}");
         }
 
         private static string getBarCodeCorrect(string barCode)
@@ -364,7 +384,7 @@ namespace ConsoleApplication3
                         "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
                         "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
                         "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
-                         "and (D.BULB_NUM_CODE = cast('" + getBarCodeCorrect(model.Code) + "' as NAME))  \n" +
+                         "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
                         //"and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
                         "and (R.CODE_NAME = cast(  \n" +
                         "('APTT_t') as MIDDLE_NAME))  \n" +
@@ -419,9 +439,9 @@ namespace ConsoleApplication3
                 case "1FIBRINOGEN":
                     if (model.TypeGoods == "RATIO")
                         query = (new QueryModel()
-                    {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
                       "d.result_text = '" + model.Value01 + "', \n" +
                       "d.hardware_date_updated = current_timestamp, " +
                       "d.hardware_info = ('CC-4000') \n" +
@@ -436,7 +456,7 @@ namespace ConsoleApplication3
                       "and (R.CODE_NAME = cast(  \n" +
                       "('FIB_M') as MIDDLE_NAME))  \n" +
                       "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        });
                     break;
                 default:
                     query = (new QueryModel()
@@ -457,9 +477,9 @@ namespace ConsoleApplication3
             int duration = 200;
             for (int i = 1; i <= x; i++)
             {
-               // Console.WriteLine();
-               // Console.Write("Beep number {0}. ", i);
-              //  Console.WriteLine($"BarCode:{getBarCodeCorrect(query.Code)}, Value {query.Value01}");
+                // Console.WriteLine();
+                // Console.Write("Beep number {0}. ", i);
+                //  Console.WriteLine($"BarCode:{getBarCodeCorrect(query.Code)}, Value {query.Value01}");
                 Console.Beep(frequency, duration);
             }
             Console.WriteLine();
@@ -515,17 +535,12 @@ namespace ConsoleApplication3
                 //Console.WriteLine(manager.GetPrivateString(Section, Key));
                 //Получить значение по секции и ключу
                 return manager.GetPrivateString(Section, Key);
-
-
             }
             catch (Exception ex)
             {
                 Log.Write_ex(ex);
                 return "";
             }
-
-
         }
-
     }
 }

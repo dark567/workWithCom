@@ -3,7 +3,6 @@ D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\C
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\ConsoleApplication3.pdb
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ConsoleApplication3.exe
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ConsoleApplication3.pdb
-D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ConsoleApplication3.csprojAssemblyReference.cache
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\FirebirdSql.Data.FirebirdClient.dll
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ConsoleApplication3.csproj.CopyComplete
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\set.ini
