@@ -157,13 +157,13 @@ namespace ConsoleApplication3
             SerialPort sp = (SerialPort)sender;
             string indata = sp.ReadExisting();
             //Console.WriteLine("Data Received:");
-            Console.Write($"{indata}");
+           // Console.Write($"{indata}");
             Log.Write(indata);
 
 
             Console.ForegroundColor = ConsoleColor.Red;
-
-            workWithDataComAsync(indata);
+            //Console.Write($"{indata}");
+             workWithDataComAsync(indata); //!!!
 
             Console.ForegroundColor = ConsoleColor.White;
 
@@ -226,6 +226,7 @@ namespace ConsoleApplication3
                 if (!string.IsNullOrEmpty(lineAll) && (countLine != 0))
                 {
                     String[] substringsCharAll = lineAll.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                   
                     for (int i = 0; i < substringsCharAll.Length; i++)
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -235,12 +236,19 @@ namespace ConsoleApplication3
 
                     //создание и передача модели в бд
                     Model model = new Model(type: substringsCharAll[0], code: substringsCharAll[1], goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"\n[0]{model.Type}, [1]{model.Code}, [2]{model.Goods}, [3]{model.TypeGoods}, [4]{model.Value01}");
+                    Console.ForegroundColor = ConsoleColor.White;
+
                     // Console.WriteLine(QueryGet(model).Query);
 
                     // UpdateRowBd(QueryGet(model).Query); //!!!!!!!
 
                     string query = QueryGet(model)?.Query;
-                    if (!string.IsNullOrEmpty(query)) UpdateRowBd_(QueryGet(model).Query);
+                    //if (!string.IsNullOrEmpty(query)) UpdateRowBd_(QueryGet(model).Query); //!!! ver1
+                    if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
+
                     //else Beep(3);
                 }
                 Console.WriteLine();
@@ -250,16 +258,16 @@ namespace ConsoleApplication3
 
 
         // определение асинхронного метода
-        static async void UpdateRowBd_(string query)
+        static async void UpdateRowBd_(Model query)
         {
-            Console.WriteLine("Начало метода async"); // выполняется синхронно
+           // Console.WriteLine("Начало метода async"); // выполняется синхронно
             await Task.Run(() => UpdateRowBd(query));                // выполняется асинхронно
-            Console.WriteLine("Конец метода async");
+           // Console.WriteLine("Конец метода async");
         }
 
 
 
-        private static void UpdateRowBd(string query)
+        private static void UpdateRowBd(Model query)
         {
             //Thread.Sleep(500);???
 
@@ -268,21 +276,28 @@ namespace ConsoleApplication3
             FbTransaction fbt = conn.BeginTransaction();
             try
             {
-                using (FbCommand cmd = new FbCommand(query, conn))
+                using (FbCommand cmd = new FbCommand(QueryGet(query).Query, conn))
                 {
                     cmd.Transaction = fbt;
                     int res = cmd.ExecuteNonQuery();
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    if (res == 0)
-                    {
-                        Beep(1, query);
+                    //if (res == 0)
+                    //{
+                    //    Beep(1, query);
+                    //    Console.ForegroundColor = ConsoleColor.Red;
+                    //}
+
+
+                    if (res == 0) {
                         Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Update {res}, BarCode:{getBarCodeCorrect(query.Code)}, Type {query.Type}, value {query.Value01}");
+                        Beep(1, query); 
                     }
-                    Console.WriteLine($"Update {res}");
-                    if (res == 0) Beep(1, query);
+                    else Console.WriteLine($"Update {res}, BarCode:{getBarCodeCorrect(query.Code)}, Type {query.Type}, value {query.Value01}");
+                    
                     Console.ForegroundColor = ConsoleColor.White;
-                    Log.Write($"/n{query}");
+                    Log.Write($"/n{getBarCodeCorrect(query.Code)}");
                     fbt.Commit();
                 }
             }
@@ -319,7 +334,7 @@ namespace ConsoleApplication3
             //    // the end of the Using block.
             //}
 
-            Console.WriteLine($"{query}");
+           // Console.WriteLine($"{query}");
         }
 
         private static string getBarCodeCorrect(string barCode)
@@ -431,7 +446,7 @@ namespace ConsoleApplication3
             return query;
         }
 
-        private static void Beep(int count, string query)
+        private static void Beep(int count, Model query)
         {
             int x = count;
 
@@ -442,9 +457,9 @@ namespace ConsoleApplication3
             int duration = 200;
             for (int i = 1; i <= x; i++)
             {
-                Console.WriteLine();
-                Console.Write("Beep number {0}. ", i);
-                Console.WriteLine(query);
+               // Console.WriteLine();
+               // Console.Write("Beep number {0}. ", i);
+              //  Console.WriteLine($"BarCode:{getBarCodeCorrect(query.Code)}, Value {query.Value01}");
                 Console.Beep(frequency, duration);
             }
             Console.WriteLine();

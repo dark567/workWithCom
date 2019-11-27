@@ -17,11 +17,11 @@ namespace ConsoleApplication3
 
         public string Value01 { get; set; }
 
-        public string Value02 { get; set; }
+        //public string Value02 { get; set; }
 
-        public string Value03 { get; set; }
+        //public string Value03 { get; set; }
 
-        public string Value04 { get; set; }
+        //public string Value04 { get; set; }
 
         public Model(string type, string code, string goods, string typeGoods, string value01/*, string value02, string value03, string value04*/)
         {
