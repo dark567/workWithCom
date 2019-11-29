@@ -30,8 +30,6 @@ namespace ConsoleApplication3
 
             Console.WriteLine($"connection bd - {(CheckDbConnection() == true ? "open" : "closed")}");
 
-
-
             ComWorking();
 
             Console.ReadKey();
@@ -52,8 +50,10 @@ namespace ConsoleApplication3
             catch (FbException ex)
             {
                 //logger.Warn(LogTopicEnum.Agent, "Error in DB connection test on CheckDBConnection", ex);
-
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
+                Console.ForegroundColor = ConsoleColor.White;
+                Beep(count: 3);
                 return false; // any error is considered as db connection error for now
             }
         }
@@ -105,7 +105,6 @@ namespace ConsoleApplication3
             }
             catch (Exception ex)
             {
-
                 // File.AppendAllText(Application.StartupPath + @"\error.log", "Ini file not found, \t" + DateTime.Now + "\n");
                 Log.Write_ex(ex);
             }
@@ -213,7 +212,7 @@ namespace ConsoleApplication3
             {
                 countLine = 0;
                 lineAll = null;
-              //  Console.WriteLine(line);
+                //  Console.WriteLine(line);
             }
             else
             {
@@ -257,13 +256,23 @@ namespace ConsoleApplication3
                 //}
 
                 //создание и передача модели в бд
-                Model model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                Model model;
+                if (substringsCharAll[2] == "1FIBRYNOGEN")
+                {
+                     model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: "n/a", value01: substringsCharAll[3]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                }
+                else 
+                {
+                     model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                }
 
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine($"\n[0]{model.Type}, [1]{model.Code}, [2]{model.Goods}, [3]{model.TypeGoods}, [4]{model.Value01}");
                 Console.ForegroundColor = ConsoleColor.White;
 
+                
                 string query = QueryGet(model)?.Query; //!!!
+                //Console.WriteLine(query);
                 if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
 
                 //UpdateRowBd_(model);
@@ -286,7 +295,6 @@ namespace ConsoleApplication3
         {
             Thread.Sleep(500);
 
-
             FbConnection conn = GetConnection();
             FbTransaction fbt = conn.BeginTransaction();
             try
@@ -303,21 +311,20 @@ namespace ConsoleApplication3
                     //    Console.ForegroundColor = ConsoleColor.Red;
                     //}
 
-
                     if (res == 0)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"\nUpdate {res}, BarCode:{query.Code}, TypeGoods {query.Goods}, value {query.Value01}");
+                        Console.WriteLine($"\nUpdate count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
                         Beep(1, query);
                     }
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"\nUpdate {res}, BarCode:{query.Code}, TypeGoods {query.Goods}, value {query.Value01}");
+                        Console.WriteLine($"\nUpdate count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
                     }
 
                     Console.ForegroundColor = ConsoleColor.White;
-                    Log.Write($"/n{query.Code}");
+                    Log.Write($"\nUpdate count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
                     fbt.Commit();
                 }
             }
@@ -326,7 +333,7 @@ namespace ConsoleApplication3
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
                 Console.ForegroundColor = ConsoleColor.White;
-                // fbt.Rollback();
+                fbt.Rollback();
             }
             finally
             {
@@ -374,6 +381,7 @@ namespace ConsoleApplication3
                         {
                             Type = model.Type,
                             Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                             "d.result = '" + model.Value01 + "', \n" +
                          "d.result_text = '" + model.Value01 + "', \n" +
                         //"d.result_text = '777', \n" +
                         "d.hardware_date_updated = current_timestamp, " +
@@ -398,7 +406,8 @@ namespace ConsoleApplication3
                         {
                             Type = model.Type,
                             Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                      "d.result_text = '" + model.Value01 + "', \n" +
+                            "d.result = '" + model.Value01 + "', \n" +
+                            "d.result_text = '" + model.Value01 + "', \n" +
                       "d.hardware_date_updated = current_timestamp, " +
                       "d.hardware_info = ('CC-4000') \n" +
                       "where ID = (select R.ID  \n" +
@@ -408,10 +417,49 @@ namespace ConsoleApplication3
                       "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
                       "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
                       "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
-                      // "and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
                       "and (R.CODE_NAME = cast(  \n" +
                       "('PT_t') as MIDDLE_NAME))  \n" +
                       "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    else if (model.TypeGoods == "INR")
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                         "d.result_text = '" + model.Value01 + "', \n" +
+                        "d.hardware_date_updated = current_timestamp, " +
+                        "d.hardware_info = ('CC-4000') \n" +
+                        "where ID = (select R.ID  \n" +
+                        "from JOR_CHECKS_DT D  \n" +
+                        "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                        "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                        "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                        "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                         "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                        "and (R.CODE_NAME = cast(  \n" +
+                        "('PT_%') as MIDDLE_NAME))  \n" +
+                        "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    else if (model.TypeGoods == "INDEX")
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                         "d.result_text = '" + model.Value01 + "', \n" +
+                        "d.hardware_date_updated = current_timestamp, " +
+                        "d.hardware_info = ('CC-4000') \n" +
+                        "where ID = (select R.ID  \n" +
+                        "from JOR_CHECKS_DT D  \n" +
+                        "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                        "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                        "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                        "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                         "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                        "and (R.CODE_NAME = cast(  \n" +
+                        "('PT_i') as MIDDLE_NAME))  \n" +
+                        "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                         });
                     break;
                 case "1TT":
@@ -420,6 +468,7 @@ namespace ConsoleApplication3
                         {
                             Type = model.Type,
                             Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                             "d.result = '" + model.Value01 + "', \n" +
                       "d.result_text = '" + model.Value01 + "', \n" +
                       "d.hardware_date_updated = current_timestamp, " +
                       "d.hardware_info = ('CC-4000') \n" +
@@ -430,18 +479,17 @@ namespace ConsoleApplication3
                       "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
                       "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
                        "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
-                      //  "and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
                       "and (R.CODE_NAME = cast(  \n" +
                       "('TT_t') as MIDDLE_NAME))  \n" +
                       "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                         });
                     break;
-                case "1FIBRINOGEN":
-                    if (model.TypeGoods == "RATIO")
+                case "1FIBRYNOGEN": //FIBRYNOGEN
                         query = (new QueryModel()
                         {
                             Type = model.Type,
                             Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                             "d.result = '" + model.Value01 + "', \n" +
                       "d.result_text = '" + model.Value01 + "', \n" +
                       "d.hardware_date_updated = current_timestamp, " +
                       "d.hardware_info = ('CC-4000') \n" +
@@ -452,9 +500,8 @@ namespace ConsoleApplication3
                       "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
                       "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
                        "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
-                      // "and (D.BULB_NUM_CODE = cast('11545026' as NAME))  \n" +
                       "and (R.CODE_NAME = cast(  \n" +
-                      "('FIB_M') as MIDDLE_NAME))  \n" +
+                      "('FIB_m') as MIDDLE_NAME))  \n" +
                       "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                         });
                     break;
@@ -466,7 +513,7 @@ namespace ConsoleApplication3
             return query;
         }
 
-        private static void Beep(int count, Model query)
+        private static void Beep(int count, Model query = null)
         {
             int x = count;
 
