@@ -28,7 +28,7 @@ namespace ConsoleApplication3
             Console.Title = "ComRead";
             First_Load();
 
-            Console.WriteLine($"connection bd - {(CheckDbConnection() == true ? "open" : "closed")}");
+            Console.WriteLine($"{DateTime.Now} connection bd - {(CheckDbConnection() == true ? "open" : "closed")}");
 
             ComWorking();
 
@@ -131,12 +131,13 @@ namespace ConsoleApplication3
             // mySerialPort.Open();
             try
             {
+                Console.WriteLine($"{DateTime.Now} Port Open");
                 mySerialPort.Open();
             }
             catch
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Port closed");
+                Console.WriteLine($"{DateTime.Now} Port closed");
                 Console.ForegroundColor = ConsoleColor.White;
             }
             System.Threading.Thread.Sleep(500);
@@ -144,7 +145,7 @@ namespace ConsoleApplication3
 
             mySerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
-            Console.WriteLine("Press any key to continue...");
+            Console.WriteLine(".................");
             Console.WriteLine();
 
             Console.ReadKey();
@@ -314,17 +315,17 @@ namespace ConsoleApplication3
                     if (res == 0)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"\nUpdate count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
+                        Console.WriteLine($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
                         Beep(1, query);
                     }
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"\nUpdate count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
+                        Console.WriteLine($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
                     }
 
                     Console.ForegroundColor = ConsoleColor.White;
-                    Log.Write($"\nUpdate count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
+                    Log.Write($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods} , Value: {query.Value01}");
                     fbt.Commit();
                 }
             }
@@ -421,7 +422,7 @@ namespace ConsoleApplication3
                       "('PT_t') as MIDDLE_NAME))  \n" +
                       "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                         });
-                    else if (model.TypeGoods == "INR")
+                    else if (model.TypeGoods == "INDEX")
                         query = (new QueryModel()
                         {
                             Type = model.Type,
@@ -441,7 +442,7 @@ namespace ConsoleApplication3
                         "('PT_%') as MIDDLE_NAME))  \n" +
                         "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                         });
-                    else if (model.TypeGoods == "INDEX")
+                    else if (model.TypeGoods == "INR")
                         query = (new QueryModel()
                         {
                             Type = model.Type,
