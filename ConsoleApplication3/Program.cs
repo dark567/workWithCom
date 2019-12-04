@@ -7,6 +7,7 @@ using System.Data.Odbc;
 using System.IO.Ports;
 using System.Linq;
 using System.Media;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,45 @@ namespace ConsoleApplication3
 
     class Program
     {
+        #region Trap application termination
+
+        static bool exitSystem = false;
+
+        [DllImport("Kernel32")]
+        private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
+
+        private delegate bool EventHandler(CtrlType sig);
+        static EventHandler _handler;
+
+        enum CtrlType
+        {
+            CTRL_C_EVENT = 0,
+            CTRL_BREAK_EVENT = 1,
+            CTRL_CLOSE_EVENT = 2,
+            CTRL_LOGOFF_EVENT = 5,
+            CTRL_SHUTDOWN_EVENT = 6
+        }
+
+        private static bool Handler(CtrlType sig)
+        {
+            Console.WriteLine("Exiting system due to external CTRL-C, or process kill, or shutdown");
+            Log.Write("Exiting system due to external CTRL-C, or process kill, or shutdown");
+
+            //do your cleanup here
+            Thread.Sleep(5000); //simulate some cleanup delay
+
+            Console.WriteLine("Cleanup complete");
+
+            //allow main to run off
+            exitSystem = true;
+
+            //shutdown right away so there are no lingering threads
+            Environment.Exit(-1);
+
+            return true;
+        }
+        #endregion
+
         static SerialPort mySerialPort = new SerialPort(GetValueIni("CC-4000", "COM_Port") ?? "COM3");
         public static string path_db;
         public static int countLine = 0;
@@ -23,12 +63,37 @@ namespace ConsoleApplication3
         public static ArrayList listGoods = new ArrayList();
         public static string lineAll = null;
 
+        public static Thread myThreadCheckCom = new Thread(new ThreadStart(CheckOpeningCom));
+
+
         public static void Main(string[] args)
         {
+            // Some biolerplate to react to close window event, CTRL-C, kill, etc
+            _handler += new EventHandler(Handler);
+            SetConsoleCtrlHandler(_handler, true);
+
+            //start your multi threaded program here
+            Program p = new Program();
+            p.Start();
+
+            //hold the console so it doesn’t run off the end
+            while (!exitSystem)
+            {
+                Thread.Sleep(250);
+            }
+        }
+
+        public void Start()
+        {
+            // start a thread and start doing some processing
+            Console.WriteLine("Thread started, processing..");
+            Log.Write($"Thread started, processing..");
+
             Console.Title = "ComRead";
             First_Load();
 
-            Console.WriteLine($"{DateTime.Now} connection bd - {(CheckDbConnection() == true ? "open" : "closed")}");
+            Console.WriteLine($"{DateTime.Now} Connection bd - {(CheckDbConnection() == true ? "Open" : "Closed")}");
+            Log.Write($"Connection bd - { (CheckDbConnection() == true ? "Open" : "Closed")}");
 
             ComWorking();
 
@@ -37,7 +102,6 @@ namespace ConsoleApplication3
 
         private static bool CheckDbConnection()
         {
-
             //return true;
             try
             {
@@ -83,7 +147,6 @@ namespace ConsoleApplication3
         }
 
 
-
         private static void First_Load()
         {
             try
@@ -96,7 +159,7 @@ namespace ConsoleApplication3
                 //Получить значение по ключу name из секции main
                 path_db = manager.GetPrivateString("Connection", "db");
 
-                Log.Write("start program");
+                Log.Write("Start program");
 
                 // File.AppendAllText(Application.StartupPath + @"\program.log", "ConnectionIni:" + path_db + ", \t" + DateTime.Now +"\n");
                 Log.Write("ConnectionIni:" + path_db);
@@ -108,10 +171,12 @@ namespace ConsoleApplication3
                 // File.AppendAllText(Application.StartupPath + @"\error.log", "Ini file not found, \t" + DateTime.Now + "\n");
                 Log.Write_ex(ex);
             }
-
-
         }
 
+
+        /// <summary>
+        /// сделать проверку на доступность com во время работы
+        /// </summary>
         private static void ComWorking()
         {
             //  p = new SerialPort(GetValueIni("CC-400", "COM_Port"));
@@ -128,30 +193,119 @@ namespace ConsoleApplication3
             //mySerialPort.DtrEnable = true;
             //mySerialPort.RtsEnable = true;
             mySerialPort.NewLine = Environment.NewLine;
-            // mySerialPort.Open();
+
             try
             {
-                Console.WriteLine($"{DateTime.Now} Port Open");
-                mySerialPort.Open();
+                //foreach (var portName in SerialPort.GetPortNames())
+                //{
+                //    SerialPort port = new SerialPort(portName);
+                //    if (port.IsOpen)
+                //    {
+                //        Console.WriteLine($"{DateTime.Now} Port {port.PortName} - Open");
+                //    }
+                //    else
+                //    {
+                //        /** do something **/
+                //        Console.WriteLine($"{DateTime.Now} Port {port.PortName} - Closed");
+                //    }
+                //}
+
+                if (mySerialPort.IsOpen)
+                {
+                    Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
+                    Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
+                }
+                else
+                {
+                    try
+                    {
+                        mySerialPort.Open();
+                    }
+                    catch
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
+                        Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    if (!mySerialPort.IsOpen)
+                    {
+                        Thread.Sleep(250);
+                        ComWorking();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
+                        Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
+
+                        // создаем новый поток
+                        if (!myThreadCheckCom.IsAlive)
+                        {
+                            Console.WriteLine("myThreadCheckCom start");
+                            myThreadCheckCom = new Thread(new ThreadStart(CheckOpeningCom));
+                            myThreadCheckCom.Start(); // запускаем поток
+                        }
+                       // else myThreadCheckCom.Abort();
+                    }
+                }
             }
-            catch
+            catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"{DateTime.Now} Port closed");
+                Console.WriteLine($"{DateTime.Now} {ex.Message}");
+                Log.Write_ex(ex);
                 Console.ForegroundColor = ConsoleColor.White;
             }
             System.Threading.Thread.Sleep(500);
 
-
             mySerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
-            Console.WriteLine(".................");
+            Console.WriteLine(new String('-', 10));
             Console.WriteLine();
 
             Console.ReadKey();
 
             mySerialPort.Close();
         }
+
+        private static void CheckOpeningCom()
+        {
+            do
+            {
+                 Thread.Sleep(2000);
+
+                //if (mySerialPort.IsOpen)
+                //{
+                //    Console.ForegroundColor = ConsoleColor.Yellow;
+                //    Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
+                //    Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
+                //    Console.ForegroundColor = ConsoleColor.White;
+                //}
+                //else
+                //{
+                //    Console.ForegroundColor = ConsoleColor.Red;
+                //    Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
+                //    Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
+                //    Console.ForegroundColor = ConsoleColor.White;
+                //    ComWorking();
+                //}
+
+                if (!mySerialPort.IsOpen)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
+                    Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    ComWorking();
+                }
+                else {
+                    Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
+                }
+            } while (true);
+        }
+
 
         private static void DataReceivedHandler(
                             object sender,
@@ -260,18 +414,18 @@ namespace ConsoleApplication3
                 Model model;
                 if (substringsCharAll[2] == "1FIBRYNOGEN")
                 {
-                     model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: "n/a", value01: substringsCharAll[3]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                    model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: "n/a", value01: substringsCharAll[3]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
                 }
-                else 
+                else
                 {
-                     model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                    model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
                 }
 
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine($"\n[0]{model.Type}, [1]{model.Code}, [2]{model.Goods}, [3]{model.TypeGoods}, [4]{model.Value01}");
                 Console.ForegroundColor = ConsoleColor.White;
 
-                
+
                 string query = QueryGet(model)?.Query; //!!!
                 //Console.WriteLine(query);
                 if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
@@ -486,25 +640,25 @@ namespace ConsoleApplication3
                         });
                     break;
                 case "1FIBRYNOGEN": //FIBRYNOGEN
-                        query = (new QueryModel()
-                        {
-                            Type = model.Type,
-                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                             "d.result = '" + model.Value01 + "', \n" +
-                      "d.result_text = '" + model.Value01 + "', \n" +
-                      "d.hardware_date_updated = current_timestamp, " +
-                      "d.hardware_info = ('CC-4000') \n" +
-                      "where ID = (select R.ID  \n" +
-                      "from JOR_CHECKS_DT D  \n" +
-                      "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
-                      "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
-                      "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
-                      "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
-                       "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
-                      "and (R.CODE_NAME = cast(  \n" +
-                      "('FIB_m') as MIDDLE_NAME))  \n" +
-                      "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                        });
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('CC-4000') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('FIB_m') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
                     break;
                 default:
                     query = (new QueryModel()
