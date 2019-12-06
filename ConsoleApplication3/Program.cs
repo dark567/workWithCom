@@ -58,10 +58,12 @@ namespace ConsoleApplication3
 
         static SerialPort mySerialPort = new SerialPort(GetValueIni("CC-4000", "COM_Port") ?? "COM3");
         public static string path_db;
-        public static int countLine = 0;
+        public static int countLineC = 0;
+        public static int countLineG = 0;
 
         public static ArrayList listGoods = new ArrayList();
-        public static string lineAll = null;
+        public static string lineAllC = null;
+        public static string lineAllG = null;
 
         public static Thread myThreadCheckCom = new Thread(new ThreadStart(CheckOpeningCom));
 
@@ -416,12 +418,16 @@ namespace ConsoleApplication3
                     //"PCT             0.07 %       [0.00 - 0.00]/n" +
                     //"Warnings:";
 
-                   // Console.WriteLine(line);
+                    // Console.WriteLine(line);
+
+                    lineAllG = null; //обнуление
+
+                    Log.Write(line);
                     workWithDataComAsync(line);
                     //  Console.ForegroundColor = ConsoleColor.Red;
                     // workWithDataCom(mySerialPort.ReadLine());
                     // Console.ForegroundColor = ConsoleColor.White;
-                    //Log.Write(mySerialPort.ReadLine());
+                    
                     //Beep(3); // потом вернуть
                 }
                 catch { }
@@ -443,13 +449,13 @@ namespace ConsoleApplication3
             #region Когуалометр
             if (line.IndexOf("CC-3003") == 0)
             {
-                countLine = 0;
-                lineAll = null;
+                countLineC = 0;
+                lineAllC = null;
                 //  Console.WriteLine(line);
             }
             else
             {
-                countLine++;
+                countLineC++;
                 //Console.WriteLine("++");
             }
 
@@ -468,9 +474,9 @@ namespace ConsoleApplication3
 
                 //if (pr) lineAll += line;
                 //else lineAll = null;
-                lineAll = line;
+                lineAllC = line;
 
-                CreateModel(lineAll);
+                //CreateModel(lineAllC); //!!!
 
                 //Console.WriteLine($"lineAll: {lineAll}");
             }
@@ -479,28 +485,36 @@ namespace ConsoleApplication3
 
             #region Гематологический
 
-            if (line.IndexOf("Serial No.:     02100365") == 0)
+            lineAllG = null;
+
+            if (line.IndexOf("Serial No.:") != 0)
             {
-                countLine = 0;
-                lineAll = null;
+
+                //lineAllG = null;
+                countLineG++;
             }
             else
             {
-                countLine++;
+                countLineG = 0;
             }
 
             if (!string.IsNullOrEmpty(line) && (line.Length > 5))
             {
-                String[] substringsChar = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                char[] delimiterChars = { ' ', '\t' };
+
+                String[] substringsChar = line.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
 
                 for (int j = 0; j < substringsChar.Length; j++)
                 {
-                    lineAll += $"[{j}]{substringsChar[j]} ";
+                    lineAllG += $" -[{j}][{substringsChar[j]}]";
                 }
 
-                CreateModel(lineAll);
+                // CreateModel(lineAllG); //!!!
 
-                Console.WriteLine($"[{countLine}] - lineAll: {lineAll}");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"[{countLineG}] - lineAllG: {lineAllG}");
+                Console.ForegroundColor = ConsoleColor.White;
+                Log.Write($"[{countLineG}] - lineAllG: {lineAllG}");
             }
 
             #endregion
