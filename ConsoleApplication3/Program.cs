@@ -79,7 +79,7 @@ namespace ConsoleApplication3
             //hold the console so it doesn’t run off the end
             while (!exitSystem)
             {
-                Thread.Sleep(250);
+                Thread.Sleep(150);
             }
         }
 
@@ -117,6 +117,7 @@ namespace ConsoleApplication3
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
                 Console.ForegroundColor = ConsoleColor.White;
+                Log.Write_ex(ex);
                 Beep(count: 3);
                 return false; // any error is considered as db connection error for now
             }
@@ -243,10 +244,10 @@ namespace ConsoleApplication3
                         if (!myThreadCheckCom.IsAlive)
                         {
                             Console.WriteLine("myThreadCheckCom start");
-                            myThreadCheckCom = new Thread(new ThreadStart(CheckOpeningCom));
+                            //myThreadCheckCom = new Thread(new ThreadStart(CheckOpeningCom));
                             myThreadCheckCom.Start(); // запускаем поток
                         }
-                       // else myThreadCheckCom.Abort();
+                        // else myThreadCheckCom.Abort();
                     }
                 }
             }
@@ -271,9 +272,12 @@ namespace ConsoleApplication3
 
         private static void CheckOpeningCom()
         {
+            bool prOpen = false;
+            bool prClose = false;
+
             do
             {
-                 Thread.Sleep(2000);
+                Thread.Sleep(2000);
 
                 //if (mySerialPort.IsOpen)
                 //{
@@ -291,18 +295,50 @@ namespace ConsoleApplication3
                 //    ComWorking();
                 //}
 
+                if (mySerialPort.IsOpen)
+                {
+
+                    if (!prClose)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - Open");
+                        Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - Open");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    prClose = true;
+                    prOpen = false;
+                }
+
                 if (!mySerialPort.IsOpen)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
-                    Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    try
+                    {
+                        mySerialPort.Open();
+                    }
+                    catch
+                    {
+                        // prOpen = false;
+                    }
 
-                    ComWorking();
+                    // ComWorking();
+
+                    if (!prOpen)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
+                        Log.Write($"Port {GetValueIni("CC-4000", "COM_Port")} - Closed");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    prClose = false;
+                    prOpen = true;
+                    // ComWorking();
                 }
-                else {
-                    Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
-                }
+
+
+                //else Console.WriteLine($"{DateTime.Now} Port {GetValueIni("CC-4000", "COM_Port")} - already Open");
+
             } while (true);
         }
 
@@ -339,7 +375,48 @@ namespace ConsoleApplication3
                 try
                 {
                     string line = mySerialPort.ReadLine();
-                    // Console.WriteLine(line);
+                    Console.WriteLine(line);
+                    //line = "Serial No.:     02100365/n" +
+                    //"RecNo: 4023/n" +
+                    //"Sample ID:      12259090/n" +
+                    //"Patient ID:     1/n" +
+                    //"Patient Name:/n" +
+                    //"Mode: Human/n" +
+                    //"Doctor:/n" +
+                    //"Birth(ymd):/n" +
+                    //"Sex: Male/n" +
+                    //"Test date(ymd): 20191206/n" +
+                    //"Test time(hm):  101841/n" +
+                    //"Param Flags   Value Unit[min - max]/n" +
+                    //"WBC             4.16    10 ^ 9 / L[4.00 - 9.00]/n" +
+                    //"LYM             1.34    10 ^ 9 / L[1.30 - 4.00]/n" +
+                    //"NEU             2.13    10 ^ 9 / L[2.00 - 7.50]/n" +
+                    //"MON             0.42    10 ^ 9 / L[0.15 - 0.70]/n" +
+                    //"EOS             0.15    10 ^ 9 / L[0.00 - 0.50]/n" +
+                    //"BAS             0.12    10 ^ 9 / L[0.00 - 0.15]/n" +
+                    //"LY % 32.3 %       [19.0 - 37.0]/n" +
+                    //"NE % 51.1 %       [40.0 - 75.0]/n" +
+                    //"MO % 10.1 %       [3.0 - 11.0]/n" +
+                    //"EO % 3.5 %       [0.0 - 5.0]/n" +
+                    //"BA % +3.0 %       [0.0 - 1.5]/n" +
+                    //"RBC + 5.91    10 ^ 12 / L[3.90 - 5.00]/n" +
+                    //"HGB + 213     g / L[120 - 160]/n" +
+                    //"HCT * 61.4 %       [36.0 - 52.0]/n" +
+                    //"MCV + 103.9   fL[76.0 - 96.0]/n" +
+                    //"MCH + 36.0    pg[27.0 - 32.0]/n" +
+                    //"MCHC            346     g / L[300 - 350]/n" +
+                    //"RDWc            15.4 %       [0.0 - 16.0]/n" +
+                    //"RDWs            57.2    fL[46.0 - 59.0]/n" +
+                    //"PLT - 111     10 ^ 9 / L[180 - 320]/n" +
+                    //"PLCR            25.22 %       [0.00 - 0.00]/n" +
+                    //"PLCC            28      10 ^ 9 / L[0 - 0]/n" +
+                    //"PDWc            40.3 %       [0.0 - 0.0]/n" +
+                    //"PDWs            17.1    fL[0.0 - 0.0]/n" +
+                    //"MPV - 6.4     fL[8.0 - 15.0]/n" +
+                    //"PCT             0.07 %       [0.00 - 0.00]/n" +
+                    //"Warnings:";
+
+                   // Console.WriteLine(line);
                     workWithDataComAsync(line);
                     //  Console.ForegroundColor = ConsoleColor.Red;
                     // workWithDataCom(mySerialPort.ReadLine());
@@ -363,6 +440,7 @@ namespace ConsoleApplication3
 
             // Console.WriteLine();
 
+            #region Когуалометр
             if (line.IndexOf("CC-3003") == 0)
             {
                 countLine = 0;
@@ -393,8 +471,40 @@ namespace ConsoleApplication3
                 lineAll = line;
 
                 CreateModel(lineAll);
-                // Console.WriteLine($"lineAll: {lineAll}");
+
+                //Console.WriteLine($"lineAll: {lineAll}");
             }
+
+            #endregion
+
+            #region Гематологический
+
+            if (line.IndexOf("Serial No.:     02100365") == 0)
+            {
+                countLine = 0;
+                lineAll = null;
+            }
+            else
+            {
+                countLine++;
+            }
+
+            if (!string.IsNullOrEmpty(line) && (line.Length > 5))
+            {
+                String[] substringsChar = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                for (int j = 0; j < substringsChar.Length; j++)
+                {
+                    lineAll += $"[{j}]{substringsChar[j]} ";
+                }
+
+                CreateModel(lineAll);
+
+                Console.WriteLine($"[{countLine}] - lineAll: {lineAll}");
+            }
+
+            #endregion
+
         }
 
         private static void CreateModel(string lineAll)
