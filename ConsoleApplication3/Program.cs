@@ -56,6 +56,8 @@ namespace ConsoleApplication3
         }
         #endregion
 
+        public static string VerApp = " ver 0.3.1";
+
         static SerialPort mySerialPort = new SerialPort(GetValueIni("CC-4000", "COM_Port") ?? "COM3");
         public static string path_db;
         public static int countLineC = 0;
@@ -64,6 +66,7 @@ namespace ConsoleApplication3
         public static ArrayList listGoods = new ArrayList();
         public static string lineAllC = null;
         public static string lineAllG = null;
+        public static string BarCode = null;
 
         public static Thread myThreadCheckCom = new Thread(new ThreadStart(CheckOpeningCom));
 
@@ -91,7 +94,7 @@ namespace ConsoleApplication3
             Console.WriteLine("Thread started, processing..");
             Log.Write($"Thread started, processing..");
 
-            Console.Title = "ComRead";
+            Console.Title = "ComRead:" + VerApp;
             First_Load();
 
             Console.WriteLine($"{DateTime.Now} Connection bd - {(CheckDbConnection() == true ? "Open" : "Closed")}");
@@ -377,7 +380,7 @@ namespace ConsoleApplication3
                 try
                 {
                     string line = mySerialPort.ReadLine();
-                    Console.WriteLine(line);
+                    Console.WriteLine($"{DateTime.Now} {line}");
                     //line = "Serial No.:     02100365/n" +
                     //"RecNo: 4023/n" +
                     //"Sample ID:      12259090/n" +
@@ -427,7 +430,7 @@ namespace ConsoleApplication3
                     //  Console.ForegroundColor = ConsoleColor.Red;
                     // workWithDataCom(mySerialPort.ReadLine());
                     // Console.ForegroundColor = ConsoleColor.White;
-                    
+
                     //Beep(3); // потом вернуть
                 }
                 catch { }
@@ -446,40 +449,41 @@ namespace ConsoleApplication3
 
             // Console.WriteLine();
 
-            #region Когуалометр
-            if (line.IndexOf("CC-3003") == 0)
-            {
-                countLineC = 0;
-                lineAllC = null;
-                //  Console.WriteLine(line);
-            }
-            else
-            {
-                countLineC++;
-                //Console.WriteLine("++");
-            }
+            #region Когуалометр раскомментировать потом
 
-            if (!string.IsNullOrEmpty(line) && (line.Length > 5))
-            {
-                String[] substringsChar = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                for (int j = 0; j < substringsChar.Length; j++)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    //  Console.Write ($" [{substringsChar.Length}] ");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    if (substringsChar.Length > 1)
-                        if (substringsChar[1] != "BEGIN") pr = true;
-                    //  else pr = false;
-                }
+            //if (line.IndexOf("CC-3003") == 0)
+            //{
+            //    countLineC = 0;
+            //    lineAllC = null;
+            //    //  Console.WriteLine(line);
+            //}
+            //else
+            //{
+            //    countLineC++;
+            //    //Console.WriteLine("++");
+            //}
 
-                //if (pr) lineAll += line;
-                //else lineAll = null;
-                lineAllC = line;
+            //if (!string.IsNullOrEmpty(line) && (line.Length > 5))
+            //{
+            //    String[] substringsChar = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            //    for (int j = 0; j < substringsChar.Length; j++)
+            //    {
+            //        Console.ForegroundColor = ConsoleColor.Red;
+            //        //  Console.Write ($" [{substringsChar.Length}] ");
+            //        Console.ForegroundColor = ConsoleColor.White;
+            //        if (substringsChar.Length > 1)
+            //            if (substringsChar[1] != "BEGIN") pr = true;
+            //        //  else pr = false;
+            //    }
 
-                //CreateModel(lineAllC); //!!!
+            //    //if (pr) lineAll += line;
+            //    //else lineAll = null;
+            //    lineAllC = line;
 
-                //Console.WriteLine($"lineAll: {lineAll}");
-            }
+            //    CreateModelC(lineAllC); //!!!
+
+            //    //Console.WriteLine($"lineAll: {lineAll}");
+            //}
 
             #endregion
 
@@ -489,7 +493,6 @@ namespace ConsoleApplication3
 
             if (line.IndexOf("Serial No.:") != 0)
             {
-
                 //lineAllG = null;
                 countLineG++;
             }
@@ -504,24 +507,72 @@ namespace ConsoleApplication3
 
                 String[] substringsChar = line.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
 
-                for (int j = 0; j < substringsChar.Length; j++)
-                {
-                    lineAllG += $" -[{j}][{substringsChar[j]}]";
-                }
+                //for (int j = 0; j < substringsChar.Length; j++)
+                //{
+                //    lineAllG += $" -[{j}][{substringsChar[j]}]";
+                //}
 
-                // CreateModel(lineAllG); //!!!
+                lineAllG = line;
+
+                if (countLineG == 2) BarCode = substringsChar[2];
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"[{countLineG}] - lineAllG: {lineAllG}");
+                Console.WriteLine($"{DateTime.Now} [{countLineG}] - {lineAllG}");
                 Console.ForegroundColor = ConsoleColor.White;
-                Log.Write($"[{countLineG}] - lineAllG: {lineAllG}");
+                Log.Write_res($"[{countLineG}] - {lineAllG}");
+
+                CreateModelG(lineAllG); //!!!
             }
 
             #endregion
 
         }
 
-        private static void CreateModel(string lineAll)
+        private static void CreateModelG(string lineAllG)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{DateTime.Now} CreateModelG - {lineAllG}");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            if (!string.IsNullOrEmpty(lineAllG) /*&& (countLine != 0)*/)
+            {
+                //String[] substringsCharAll = lineAllG.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                char[] delimiterChars = { ' ', '\t' };
+
+                String[] substringsCharAll = lineAllG.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+
+                //создание и передача модели в бд
+                Model model;
+
+                model = new Model(type: substringsCharAll[0], code: BarCode, goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[1]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+
+                //if (substringsCharAll[2] == "1FIBRYNOGEN")
+                //{
+                //    model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: "n/a", value01: substringsCharAll[3]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                //}
+                //else
+                //{
+                //    model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[4]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                //}
+
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"\n[nah&&&& - 0]{model.Type}, [barCode1]{model.Code}, [type ? - 2]{model.Goods}, [nah??????3]{model.TypeGoods}, [value01 - 4]{model.Value01}");
+                Console.ForegroundColor = ConsoleColor.White;
+
+
+                string query = QueryGet(model)?.Query; //!!!
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine(query);
+                Log.Write(query);
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
+
+                //UpdateRowBd_(model);
+            }
+        }
+
+        private static void CreateModelC(string lineAll)
         {
             if (!string.IsNullOrEmpty(lineAll) /*&& (countLine != 0)*/)
             {
@@ -559,7 +610,6 @@ namespace ConsoleApplication3
         }
 
 
-
         // определение асинхронного метода
         static async void UpdateRowBd_(Model query)
         {
@@ -567,7 +617,6 @@ namespace ConsoleApplication3
             await Task.Run(() => UpdateRowBd(query));                // выполняется асинхронно
                                                                      // Console.WriteLine("Конец метода async");
         }
-
 
 
         private static void UpdateRowBd(Model query)
@@ -784,9 +833,30 @@ namespace ConsoleApplication3
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                     });
                     break;
+                case "WBC": //WBC
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('CC-4000') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('FIB_m') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
                 default:
                     query = (new QueryModel()
-                    { Type = "", Query = "" });
+                    { Type = "Query NULL", Query = "Query NULL" });
                     break;
             }
             return query;
