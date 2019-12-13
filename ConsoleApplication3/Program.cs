@@ -56,7 +56,8 @@ namespace ConsoleApplication3
         }
         #endregion
 
-        public static string VerApp = " ver 0.3.1";
+        public static string TypeAnaliz = "G";
+        public static string VerApp = " ver 0.3.2";
 
         static SerialPort mySerialPort = new SerialPort(GetValueIni("CC-4000", "COM_Port") ?? "COM3");
         public static string path_db;
@@ -450,80 +451,82 @@ namespace ConsoleApplication3
             // Console.WriteLine();
 
             #region Когуалометр раскомментировать потом
+            if (TypeAnaliz == "C")
+            {
+                if (line.IndexOf("CC-3003") == 0)
+                {
+                    countLineC = 0;
+                    lineAllC = null;
+                    //  Console.WriteLine(line);
+                }
+                else
+                {
+                    countLineC++;
+                    //Console.WriteLine("++");
+                }
 
-            //if (line.IndexOf("CC-3003") == 0)
-            //{
-            //    countLineC = 0;
-            //    lineAllC = null;
-            //    //  Console.WriteLine(line);
-            //}
-            //else
-            //{
-            //    countLineC++;
-            //    //Console.WriteLine("++");
-            //}
+                if (!string.IsNullOrEmpty(line) && (line.Length > 5))
+                {
+                    String[] substringsCharC = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int j = 0; j < substringsCharC.Length; j++)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        //  Console.Write ($" [{substringsChar.Length}] ");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        if (substringsCharC.Length > 1)
+                            if (substringsCharC[1] != "BEGIN") pr = true;
+                        //  else pr = false;
+                    }
 
-            //if (!string.IsNullOrEmpty(line) && (line.Length > 5))
-            //{
-            //    String[] substringsChar = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            //    for (int j = 0; j < substringsChar.Length; j++)
-            //    {
-            //        Console.ForegroundColor = ConsoleColor.Red;
-            //        //  Console.Write ($" [{substringsChar.Length}] ");
-            //        Console.ForegroundColor = ConsoleColor.White;
-            //        if (substringsChar.Length > 1)
-            //            if (substringsChar[1] != "BEGIN") pr = true;
-            //        //  else pr = false;
-            //    }
+                    //if (pr) lineAll += line;
+                    //else lineAll = null;
+                    lineAllC = line;
 
-            //    //if (pr) lineAll += line;
-            //    //else lineAll = null;
-            //    lineAllC = line;
+                    CreateModelC(lineAllC); //!!!
 
-            //    CreateModelC(lineAllC); //!!!
-
-            //    //Console.WriteLine($"lineAll: {lineAll}");
-            //}
-
+                    //Console.WriteLine($"lineAll: {lineAll}");
+                }
+            }
             #endregion
 
             #region Гематологический
-
-            lineAllG = null;
-
-            if (line.IndexOf("Serial No.:") != 0)
+            if (TypeAnaliz == "G")
             {
-                //lineAllG = null;
-                countLineG++;
+                lineAllG = null;
+
+                if (line.IndexOf("Serial No.:") != 0)
+                {
+                    //lineAllG = null;
+                    countLineG++;
+                }
+                else
+                {
+                    countLineG = 0;
+                }
+
+                if (!string.IsNullOrEmpty(line) && (line.Length > 5))
+                {
+                    char[] delimiterChars = { ' ', '\t' };
+
+                    String[] substringsCharG = line.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+
+                    //for (int j = 0; j < substringsChar.Length; j++)
+                    //{
+                    //    lineAllG += $" -[{j}][{substringsChar[j]}]";
+                    //}
+
+                    lineAllG = line;
+
+                    if (countLineG == 2) BarCode = substringsCharG[2];
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"{DateTime.Now} [{countLineG}] - {lineAllG}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Log.Write_res($"[{countLineG}] - {lineAllG}");
+
+                    CreateModelG(lineAllG); //!!!
+                }
             }
-            else
-            {
-                countLineG = 0;
-            }
-
-            if (!string.IsNullOrEmpty(line) && (line.Length > 5))
-            {
-                char[] delimiterChars = { ' ', '\t' };
-
-                String[] substringsChar = line.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
-
-                //for (int j = 0; j < substringsChar.Length; j++)
-                //{
-                //    lineAllG += $" -[{j}][{substringsChar[j]}]";
-                //}
-
-                lineAllG = line;
-
-                if (countLineG == 2) BarCode = substringsChar[2];
-
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"{DateTime.Now} [{countLineG}] - {lineAllG}");
-                Console.ForegroundColor = ConsoleColor.White;
-                Log.Write_res($"[{countLineG}] - {lineAllG}");
-
-                CreateModelG(lineAllG); //!!!
-            }
-
             #endregion
 
         }
@@ -545,8 +548,11 @@ namespace ConsoleApplication3
                 //создание и передача модели в бд
                 Model model;
 
-                model = new Model(type: substringsCharAll[0], code: BarCode, goods: substringsCharAll[2], typeGoods: substringsCharAll[3], value01: substringsCharAll[1]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                // если гематологический
+                model = new Model(type: substringsCharAll[0], code: BarCode, goods: substringsCharAll[0], typeGoods: substringsCharAll[3], value01: substringsCharAll[1]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                Console.WriteLine($"type[0]: substringsCharAll[0], code: {BarCode}, goods[0]: {substringsCharAll[0]}, typeGoods[3]: {substringsCharAll[3]}, value01[1]: {substringsCharAll[1]}");
 
+                //если коагулометр
                 //if (substringsCharAll[2] == "1FIBRYNOGEN")
                 //{
                 //    model = new Model(type: substringsCharAll[0], code: getBarCodeCorrect(substringsCharAll[1]), goods: substringsCharAll[2], typeGoods: "n/a", value01: substringsCharAll[3]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
@@ -565,7 +571,7 @@ namespace ConsoleApplication3
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine(query);
                 Log.Write(query);
-                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.ForegroundColor = ConsoleColor.White;
                 if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
 
                 //UpdateRowBd_(model);
@@ -602,7 +608,7 @@ namespace ConsoleApplication3
 
 
                 string query = QueryGet(model)?.Query; //!!!
-                //Console.WriteLine(query);
+                                                       //Console.WriteLine(query);
                 if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
 
                 //UpdateRowBd_(model);
@@ -841,7 +847,7 @@ namespace ConsoleApplication3
                          "d.result = '" + model.Value01 + "', \n" +
                   "d.result_text = '" + model.Value01 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
-                  "d.hardware_info = ('CC-4000') \n" +
+                  "d.hardware_info = ('GEMATOL') \n" +
                   "where ID = (select R.ID  \n" +
                   "from JOR_CHECKS_DT D  \n" +
                   "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
@@ -850,10 +856,472 @@ namespace ConsoleApplication3
                   "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
                    "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
                   "and (R.CODE_NAME = cast(  \n" +
-                  "('FIB_m') as MIDDLE_NAME))  \n" +
+                  "('WBC') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                     });
                     break;
+                case "LYM": //LYM
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('LYM%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                case "NEU": //NEU
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('NEU') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                case "MON": //MON
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('MON%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                //case "EOS": //EOS
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('EOZ%') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "BAS": //BAS
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('BAZ%') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                case "LY%": //LY%
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('LYM%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                case "NE%": //NE%
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('NE%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                case "MO%": //MO%
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('MON%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                case "EO%": //EO%
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('EOZ%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                case "BA%": //BA%
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('BAZ%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                case "RBC": //RBC
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('RBC') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                //case "HCT": //HCT
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('HCT') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "MCV": //MCV
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('MCV') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "MCH": //MCH
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('MCH') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "MCHC": //MCHC
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('MCHC') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "RDWc": //RDWc
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('RDWc') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "RDWs": //RDWs
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('RDWs') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                case "PLT": //PLT
+                    query = (new QueryModel()
+                    {
+                        Type = model.Type,
+                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value01 + "', \n" +
+                  "d.result_text = '" + model.Value01 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('PLT') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                    });
+                    break;
+                //case "PLCR": //PLCR
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('PLCR') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "PLCC": //PLCC
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('PLCC') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "MPV": //MPV
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('MPV') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                //case "PCT": //PCT
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('PCT') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
                 default:
                     query = (new QueryModel()
                     { Type = "Query NULL", Query = "Query NULL" });
