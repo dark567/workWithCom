@@ -7,10 +7,12 @@ using System.Data.Odbc;
 using System.IO.Ports;
 using System.Linq;
 using System.Media;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace ConsoleApplication3
 {
@@ -54,10 +56,12 @@ namespace ConsoleApplication3
 
             return true;
         }
+
         #endregion
 
+
         public static string TypeAnaliz = "G";
-        public static string VerApp = " ver 0.3.2";
+        public static string VerApp = $"ver: {typeof(Program).Assembly.GetName().Version.ToString()}";
 
         static SerialPort mySerialPort = new SerialPort(GetValueIni("CC-4000", "COM_Port") ?? "COM3");
         public static string path_db;
@@ -517,7 +521,7 @@ namespace ConsoleApplication3
 
                     lineAllG = line;
 
-                    if (countLineG == 2) BarCode = substringsCharG[2];
+                    if (countLineG == 2) BarCode = substringsCharG[2] != null ? substringsCharG[2] : "n/a";
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"{DateTime.Now} [{countLineG}] - {lineAllG}");
@@ -549,8 +553,8 @@ namespace ConsoleApplication3
                 Model model;
 
                 // если гематологический
-                model = new Model(type: substringsCharAll[0], code: BarCode, goods: substringsCharAll[0], typeGoods: substringsCharAll[3], value01: substringsCharAll[1]/*, value02: substringsCharAll[5], value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
-                Console.WriteLine($"type[0]: substringsCharAll[0], code: {BarCode}, goods[0]: {substringsCharAll[0]}, typeGoods[3]: {substringsCharAll[3]}, value01[1]: {substringsCharAll[1]}");
+                model = new Model(type: substringsCharAll[0], code: BarCode, goods: substringsCharAll[0], typeGoods: substringsCharAll[3], value01: substringsCharAll[1], value02: substringsCharAll[2]/*, value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
+                Console.WriteLine($"type[0]: {substringsCharAll[0]}, code: {BarCode}, goods[0]: {substringsCharAll[0]}, typeGoods[3]: {substringsCharAll[3]}, value01[1]: {substringsCharAll[1]}, value02[1]: {substringsCharAll[2]}");
 
                 //если коагулометр
                 //if (substringsCharAll[2] == "1FIBRYNOGEN")
@@ -572,7 +576,8 @@ namespace ConsoleApplication3
                 Console.WriteLine(query);
                 Log.Write(query);
                 Console.ForegroundColor = ConsoleColor.White;
-                if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2
+
+                if (!string.IsNullOrEmpty(query)) UpdateRowBd_(model); //!!! ver2 потом включить
 
                 //UpdateRowBd_(model);
             }
@@ -616,15 +621,21 @@ namespace ConsoleApplication3
         }
 
 
-        // определение асинхронного метода
+        /// <summary>
+        /// асинхронный метод запускающий асинхронно метод изменения данных в бд
+        /// </summary>
+        /// <param name="query"></param>
         static async void UpdateRowBd_(Model query)
         {
-            // Console.WriteLine("Начало метода async"); // выполняется синхронно
+            // Console.WriteLine("Начало метода async"); 
             await Task.Run(() => UpdateRowBd(query));                // выполняется асинхронно
                                                                      // Console.WriteLine("Конец метода async");
         }
 
-
+        /// <summary>
+        /// внесение даннх в бд
+        /// </summary>
+        /// <param name="query"></param>
         private static void UpdateRowBd(Model query)
         {
             Thread.Sleep(500);
@@ -840,10 +851,12 @@ namespace ConsoleApplication3
                     });
                     break;
                 case "WBC": //WBC
-                    query = (new QueryModel()
+                    if (IsDouble(model.Value01))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
                          "d.result = '" + model.Value01 + "', \n" +
                   "d.result_text = '" + model.Value01 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
@@ -858,15 +871,16 @@ namespace ConsoleApplication3
                   "and (R.CODE_NAME = cast(  \n" +
                   "('WBC') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
-                    break;
-                case "LYM": //LYM
-                    query = (new QueryModel()
+                        });
+                    }
+                    else if (IsDouble(model.Value02))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                         "d.result = '" + model.Value01 + "', \n" +
-                  "d.result_text = '" + model.Value01 + "', \n" +
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value02 + "', \n" +
+                  "d.result_text = '" + model.Value02 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
                   "d.hardware_info = ('GEMATOL') \n" +
                   "where ID = (select R.ID  \n" +
@@ -877,15 +891,44 @@ namespace ConsoleApplication3
                   "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
                    "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
                   "and (R.CODE_NAME = cast(  \n" +
-                  "('LYM%') as MIDDLE_NAME))  \n" +
+                  "('WBC') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
-                    break;
-                case "NEU": //NEU
-                    query = (new QueryModel()
+                        });
+                    }
+                    else
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                        query = (new QueryModel()
+                        { Type = "Query NULL", Query = "Query NULL" });
+                    }
+                    break;
+                //case "LYM": //LYM
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('LYM%') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
+                case "NEU": //NEU
+                    if (IsDouble(model.Value01))
+                    {
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
                          "d.result = '" + model.Value01 + "', \n" +
                   "d.result_text = '" + model.Value01 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
@@ -900,15 +943,16 @@ namespace ConsoleApplication3
                   "and (R.CODE_NAME = cast(  \n" +
                   "('NEU') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
-                    break;
-                case "MON": //MON
-                    query = (new QueryModel()
+                        });
+                    }
+                    else if (IsDouble(model.Value02))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                         "d.result = '" + model.Value01 + "', \n" +
-                  "d.result_text = '" + model.Value01 + "', \n" +
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value02 + "', \n" +
+                  "d.result_text = '" + model.Value02 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
                   "d.hardware_info = ('GEMATOL') \n" +
                   "where ID = (select R.ID  \n" +
@@ -919,10 +963,37 @@ namespace ConsoleApplication3
                   "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
                    "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
                   "and (R.CODE_NAME = cast(  \n" +
-                  "('MON%') as MIDDLE_NAME))  \n" +
+                  "('NEU') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        });
+                    }
+                    else
+                    {
+                        query = (new QueryModel()
+                        { Type = "Query NULL", Query = "Query NULL" });
+                    }
                     break;
+                //case "MON": //MON
+                //    query = (new QueryModel()
+                //    {
+                //        Type = model.Type,
+                //        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                //         "d.result = '" + model.Value01 + "', \n" +
+                //  "d.result_text = '" + model.Value01 + "', \n" +
+                //  "d.hardware_date_updated = current_timestamp, " +
+                //  "d.hardware_info = ('GEMATOL') \n" +
+                //  "where ID = (select R.ID  \n" +
+                //  "from JOR_CHECKS_DT D  \n" +
+                //  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                //  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                //  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                //  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                //   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                //  "and (R.CODE_NAME = cast(  \n" +
+                //  "('MON%') as MIDDLE_NAME))  \n" +
+                //  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                //    });
+                //    break;
                 //case "EOS": //EOS
                 //    query = (new QueryModel()
                 //    {
@@ -987,10 +1058,12 @@ namespace ConsoleApplication3
                     });
                     break;
                 case "NE%": //NE%
-                    query = (new QueryModel()
+                    if (IsDouble(model.Value01))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
                          "d.result = '" + model.Value01 + "', \n" +
                   "d.result_text = '" + model.Value01 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
@@ -1005,13 +1078,44 @@ namespace ConsoleApplication3
                   "and (R.CODE_NAME = cast(  \n" +
                   "('NE%') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        });
+                    }
+                    else if (IsDouble(model.Value02))
+                    {
+
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                         "d.result = '" + model.Value02 + "', \n" +
+                  "d.result_text = '" + model.Value02 + "', \n" +
+                  "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                  "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('NE%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    }
+                    else
+                    {
+                        query = (new QueryModel()
+                        { Type = "Query NULL", Query = "Query NULL" });
+                    }
                     break;
                 case "MO%": //MO%
-                    query = (new QueryModel()
+                    if (IsDouble(model.Value01))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
                          "d.result = '" + model.Value01 + "', \n" +
                   "d.result_text = '" + model.Value01 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
@@ -1026,13 +1130,43 @@ namespace ConsoleApplication3
                   "and (R.CODE_NAME = cast(  \n" +
                   "('MON%') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        });
+                    }
+                    else if (IsDouble(model.Value02))
+                    {
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                             "d.result = '" + model.Value02 + "', \n" +
+                      "d.result_text = '" + model.Value02 + "', \n" +
+                      "d.hardware_date_updated = current_timestamp, " +
+                      "d.hardware_info = ('GEMATOL') \n" +
+                      "where ID = (select R.ID  \n" +
+                      "from JOR_CHECKS_DT D  \n" +
+                      "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                      "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                      "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                      "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                       "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                      "and (R.CODE_NAME = cast(  \n" +
+                      "('MON%') as MIDDLE_NAME))  \n" +
+                      "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    }
+                    else
+                    {
+                        query = (new QueryModel()
+                        { Type = "Query NULL", Query = "Query NULL" });
+                    }
                     break;
                 case "EO%": //EO%
-                    query = (new QueryModel()
+                    if (IsDouble(model.Value01))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
                          "d.result = '" + model.Value01 + "', \n" +
                   "d.result_text = '" + model.Value01 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
@@ -1047,13 +1181,44 @@ namespace ConsoleApplication3
                   "and (R.CODE_NAME = cast(  \n" +
                   "('EOZ%') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        });
+                    }
+
+                    else if (IsDouble(model.Value02))
+                    {
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                     "d.result = '" + model.Value02 + "', \n" +
+                   "d.result_text = '" + model.Value02 + "', \n" +
+                   "d.hardware_date_updated = current_timestamp, " +
+                  "d.hardware_info = ('GEMATOL') \n" +
+                  "where ID = (select R.ID  \n" +
+                   "from JOR_CHECKS_DT D  \n" +
+                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+               "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                  "and (R.CODE_NAME = cast(  \n" +
+                  "('EOZ%') as MIDDLE_NAME))  \n" +
+                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    }
+                    else
+                    {
+                        query = (new QueryModel()
+                        { Type = "Query NULL", Query = "Query NULL" });
+                    }
                     break;
                 case "BA%": //BA%
-                    query = (new QueryModel()
+                    if (IsDouble(model.Value01))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
                          "d.result = '" + model.Value01 + "', \n" +
                   "d.result_text = '" + model.Value01 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
@@ -1068,29 +1233,89 @@ namespace ConsoleApplication3
                   "and (R.CODE_NAME = cast(  \n" +
                   "('BAZ%') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        });
+                    }
+                    else if (IsDouble(model.Value02))
+                    {
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                            "d.result = '" + model.Value02 + "', \n" +
+                     "d.result_text = '" + model.Value02 + "', \n" +
+                     "d.hardware_date_updated = current_timestamp, " +
+                     "d.hardware_info = ('GEMATOL') \n" +
+                     "where ID = (select R.ID  \n" +
+                     "from JOR_CHECKS_DT D  \n" +
+                     "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                     "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                     "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                     "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                      "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                     "and (R.CODE_NAME = cast(  \n" +
+                     "('BAZ%') as MIDDLE_NAME))  \n" +
+                     "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    }
+                    else
+                    {
+                        query = (new QueryModel()
+                        { Type = "Query NULL", Query = "Query NULL" });
+                    }
                     break;
                 case "RBC": //RBC
-                    query = (new QueryModel()
+
+                    if (IsDouble(model.Value01))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                         "d.result = '" + model.Value01 + "', \n" +
-                  "d.result_text = '" + model.Value01 + "', \n" +
-                  "d.hardware_date_updated = current_timestamp, " +
-                  "d.hardware_info = ('GEMATOL') \n" +
-                  "where ID = (select R.ID  \n" +
-                  "from JOR_CHECKS_DT D  \n" +
-                  "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
-                  "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
-                  "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
-                  "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
-                   "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
-                  "and (R.CODE_NAME = cast(  \n" +
-                  "('RBC') as MIDDLE_NAME))  \n" +
-                  "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                             "d.result = '" + model.Value01 + "', \n" +
+                      "d.result_text = '" + model.Value01 + "', \n" +
+                      "d.hardware_date_updated = current_timestamp, " +
+                      "d.hardware_info = ('GEMATOL') \n" +
+                      "where ID = (select R.ID  \n" +
+                      "from JOR_CHECKS_DT D  \n" +
+                      "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                      "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                      "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                      "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                       "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                      "and (R.CODE_NAME = cast(  \n" +
+                      "('RBC') as MIDDLE_NAME))  \n" +
+                      "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    }
+                    else if (IsDouble(model.Value02))
+                    {
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                             "d.result = '" + model.Value02 + "', \n" +
+                      "d.result_text = '" + model.Value02 + "', \n" +
+                      "d.hardware_date_updated = current_timestamp, " +
+                      "d.hardware_info = ('GEMATOL') \n" +
+                      "where ID = (select R.ID  \n" +
+                      "from JOR_CHECKS_DT D  \n" +
+                      "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                      "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                      "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                      "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                       "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                      "and (R.CODE_NAME = cast(  \n" +
+                      "('RBC') as MIDDLE_NAME))  \n" +
+                      "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    }
+                    else
+                    {
+                        query = (new QueryModel()
+                        { Type = "Query NULL", Query = "Query NULL" });
+                    }
                     break;
+
                 //case "HCT": //HCT
                 //    query = (new QueryModel()
                 //    {
@@ -1218,10 +1443,12 @@ namespace ConsoleApplication3
                 //    });
                 //    break;
                 case "PLT": //PLT
-                    query = (new QueryModel()
+                    if (IsDouble(model.Value01))
                     {
-                        Type = model.Type,
-                        Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
                          "d.result = '" + model.Value01 + "', \n" +
                   "d.result_text = '" + model.Value01 + "', \n" +
                   "d.hardware_date_updated = current_timestamp, " +
@@ -1236,7 +1463,35 @@ namespace ConsoleApplication3
                   "and (R.CODE_NAME = cast(  \n" +
                   "('PLT') as MIDDLE_NAME))  \n" +
                   "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
-                    });
+                        });
+                    }
+                    else if (IsDouble(model.Value02))
+                    {
+                        query = (new QueryModel()
+                        {
+                            Type = model.Type,
+                            Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
+                                                 "d.result = '" + model.Value02 + "', \n" +
+                                          "d.result_text = '" + model.Value02 + "', \n" +
+                                          "d.hardware_date_updated = current_timestamp, " +
+                                          "d.hardware_info = ('GEMATOL') \n" +
+                                          "where ID = (select R.ID  \n" +
+                                          "from JOR_CHECKS_DT D  \n" +
+                                          "inner join JOR_CHECKS C on C.ID = D.HD_ID  \n" +
+                                          "inner join JOR_RESULTS_DT R on R.HD_ID = D.ID  \n" +
+                                          "left join DIC_NO_OPPORT_TO_RES N on N.ID = D.DIC_NO_OPPORT_TO_RES_ID  \n" +
+                                          "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
+                                           "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
+                                          "and (R.CODE_NAME = cast(  \n" +
+                                          "('PLT') as MIDDLE_NAME))  \n" +
+                                          "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
+                        });
+                    }
+                    else
+                    {
+                        query = (new QueryModel()
+                        { Type = "Query NULL", Query = "Query NULL" });
+                    }
                     break;
                 //case "PLCR": //PLCR
                 //    query = (new QueryModel()
@@ -1328,6 +1583,12 @@ namespace ConsoleApplication3
                     break;
             }
             return query;
+        }
+
+        private static bool IsDouble(string val)
+        {
+            return Double.TryParse(val, out _);
+
         }
 
         private static void Beep(int count, Model query = null)
