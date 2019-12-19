@@ -7,3 +7,4 @@ D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\F
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ConsoleApplication3.csproj.CopyComplete
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\set.ini
 D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ConsoleApplication3.csproj.CoreCompileInputs.cache
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ConsoleApplication3.csprojAssemblyReference.cache
