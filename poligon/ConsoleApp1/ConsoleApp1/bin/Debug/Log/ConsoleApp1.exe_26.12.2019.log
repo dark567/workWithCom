@@ -1,0 +1,444 @@
+[26.12.2019 13:06:31] [Start program] 
+[26.12.2019 13:06:31] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 13:06:33] [
+26.12.2019 13:06:33 Update count: 0, BarCode: 12259090, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 13:06:33] [
+26.12.2019 13:06:33 Update count: 0, BarCode: 12259090, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 13:06:33] [
+26.12.2019 13:06:33 Update count: 0, BarCode: 12259090, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 13:06:33] [
+26.12.2019 13:06:33 Update count: 0, BarCode: 12259090, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 13:06:33] [
+26.12.2019 13:06:33 Update count: 1, BarCode: 12259090, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 13:06:33] [
+26.12.2019 13:06:33 Update count: 0, BarCode: 12259090, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 13:06:33] [
+26.12.2019 13:06:33 Update count: 0, BarCode: 12259090, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 13:06:33] [
+26.12.2019 13:06:33 Update count: 0, BarCode: 12259090, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 13:10:59] [Start program] 
+[26.12.2019 13:10:59] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 13:11:00] [
+26.12.2019 13:11:00 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 13:11:00] [
+26.12.2019 13:11:00 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 13:11:00] [
+26.12.2019 13:11:00 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 13:11:00] [
+26.12.2019 13:11:00 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 13:11:00] [
+26.12.2019 13:11:00 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 13:11:00] [
+26.12.2019 13:11:00 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 13:11:00] [
+26.12.2019 13:11:00 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 13:11:00] [
+26.12.2019 13:11:00 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 13:17:58] [Thread started, processing..] 
+[26.12.2019 13:17:58] [Start program] 
+[26.12.2019 13:17:58] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 13:17:59] [
+26.12.2019 13:17:59 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 13:17:59] [
+26.12.2019 13:17:59 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 13:17:59] [
+26.12.2019 13:17:59 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 13:17:59] [
+26.12.2019 13:17:59 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 13:17:59] [
+26.12.2019 13:17:59 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 13:17:59] [
+26.12.2019 13:17:59 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 13:17:59] [
+26.12.2019 13:17:59 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 13:17:59] [
+26.12.2019 13:17:59 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 13:18:16] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 13:18:28] [Thread started, processing..] 
+[26.12.2019 13:18:28] [Start program] 
+[26.12.2019 13:18:28] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 13:18:29] [
+26.12.2019 13:18:29 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 13:18:29] [
+26.12.2019 13:18:29 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 13:18:29] [
+26.12.2019 13:18:29 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 13:18:29] [
+26.12.2019 13:18:29 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 13:18:29] [
+26.12.2019 13:18:29 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 13:18:29] [
+26.12.2019 13:18:29 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 13:18:29] [
+26.12.2019 13:18:29 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 13:18:30] [
+26.12.2019 13:18:30 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 13:20:33] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 13:26:45] [Thread started, processing..] 
+[26.12.2019 13:26:45] [Start program] 
+[26.12.2019 13:26:45] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 13:26:45] [
+26.12.2019 13:26:45 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 13:26:46] [
+26.12.2019 13:26:46 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 13:26:46] [
+26.12.2019 13:26:46 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 13:26:46] [
+26.12.2019 13:26:46 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 13:26:46] [
+26.12.2019 13:26:46 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 13:26:46] [
+26.12.2019 13:26:46 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 13:26:46] [
+26.12.2019 13:26:46 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 13:26:46] [
+26.12.2019 13:26:46 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 13:28:29] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 13:30:03] [Thread started, processing..] 
+[26.12.2019 13:30:03] [Start program] 
+[26.12.2019 13:30:03] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 13:30:04] [
+26.12.2019 13:30:04 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 13:30:04] [
+26.12.2019 13:30:04 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 13:30:04] [
+26.12.2019 13:30:04 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 13:30:04] [
+26.12.2019 13:30:04 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 13:30:04] [
+26.12.2019 13:30:04 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 13:30:04] [
+26.12.2019 13:30:04 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 13:30:04] [
+26.12.2019 13:30:04 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 13:30:04] [
+26.12.2019 13:30:04 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 13:32:04] [Thread started, processing..] 
+[26.12.2019 13:32:04] [Start program] 
+[26.12.2019 13:32:04] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 13:32:05] [
+26.12.2019 13:32:05 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 13:32:05] [
+26.12.2019 13:32:05 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 13:32:05] [
+26.12.2019 13:32:05 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 13:32:05] [
+26.12.2019 13:32:05 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 13:32:05] [
+26.12.2019 13:32:05 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 13:32:05] [
+26.12.2019 13:32:05 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 13:32:05] [
+26.12.2019 13:32:05 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 13:32:05] [
+26.12.2019 13:32:05 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 13:32:08] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:07:50] [Thread started, processing..] 
+[26.12.2019 14:07:50] [Start program] 
+[26.12.2019 14:07:50] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:07:50] [
+26.12.2019 14:07:50 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:07:50] [
+26.12.2019 14:07:50 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:07:51] [
+26.12.2019 14:07:51 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:07:51] [
+26.12.2019 14:07:51 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:07:51] [
+26.12.2019 14:07:51 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:07:51] [
+26.12.2019 14:07:51 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:07:51] [
+26.12.2019 14:07:51 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:07:51] [
+26.12.2019 14:07:51 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:07:52] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:08:30] [Thread started, processing..] 
+[26.12.2019 14:08:30] [Start program] 
+[26.12.2019 14:08:30] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:08:31] [
+26.12.2019 14:08:31 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:08:31] [
+26.12.2019 14:08:31 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:08:31] [
+26.12.2019 14:08:31 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:08:31] [
+26.12.2019 14:08:31 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:08:31] [
+26.12.2019 14:08:31 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:08:31] [
+26.12.2019 14:08:31 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:08:31] [
+26.12.2019 14:08:31 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:08:32] [
+26.12.2019 14:08:32 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:08:36] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:08:57] [Thread started, processing..] 
+[26.12.2019 14:08:57] [Start program] 
+[26.12.2019 14:08:57] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:08:58] [
+26.12.2019 14:08:58 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:08:58] [
+26.12.2019 14:08:58 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:08:58] [
+26.12.2019 14:08:58 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:08:58] [
+26.12.2019 14:08:58 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:08:58] [
+26.12.2019 14:08:58 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:08:58] [
+26.12.2019 14:08:58 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:08:58] [
+26.12.2019 14:08:58 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:08:59] [
+26.12.2019 14:08:59 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:09:01] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:09:13] [Thread started, processing..] 
+[26.12.2019 14:09:13] [Start program] 
+[26.12.2019 14:09:13] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:09:14] [
+26.12.2019 14:09:14 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:09:14] [
+26.12.2019 14:09:14 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:09:14] [
+26.12.2019 14:09:14 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:09:14] [
+26.12.2019 14:09:14 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:09:14] [
+26.12.2019 14:09:14 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:09:14] [
+26.12.2019 14:09:14 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:09:14] [
+26.12.2019 14:09:14 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:09:14] [
+26.12.2019 14:09:14 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:09:18] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:15:02] [Thread started, processing..] 
+[26.12.2019 14:15:02] [Start program] 
+[26.12.2019 14:15:02] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:15:02] [
+26.12.2019 14:15:02 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:15:02] [
+26.12.2019 14:15:02 Update count: 0, BarCode: 12214945, TypeGoods: MON, TypeGoods: ^, Value1: 0.42, Value2: 10] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: LYM, TypeGoods: ^, Value1: 1.34, Value2: 10] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: NEU, TypeGoods: ^, Value1: 2.13, Value2: 10] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: EOS, TypeGoods: ^, Value1: 0.15, Value2: 10] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: BAS, TypeGoods: ^, Value1: 0.12, Value2: 10] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 1, BarCode: 12214945, TypeGoods: HGB, TypeGoods: g, Value1: +, Value2: 213] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: HCT, TypeGoods: %, Value1: *, Value2: 61.4] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: MCV, TypeGoods: fL[76.0, Value1: +, Value2: 103.9] 
+[26.12.2019 14:15:03] [
+26.12.2019 14:15:03 Update count: 0, BarCode: 12214945, TypeGoods: MCH, TypeGoods: pg[27.0, Value1: +, Value2: 36.0] 
+[26.12.2019 14:15:04] [
+26.12.2019 14:15:04 Update count: 0, BarCode: 12214945, TypeGoods: MCHC, TypeGoods: /, Value1: 346, Value2: g] 
+[26.12.2019 14:15:04] [
+26.12.2019 14:15:04 Update count: 0, BarCode: 12214945, TypeGoods: RDWc, TypeGoods: [0.0, Value1: 15.4, Value2: %] 
+[26.12.2019 14:15:04] [
+26.12.2019 14:15:04 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:15:18] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:16:09] [Thread started, processing..] 
+[26.12.2019 14:16:09] [Start program] 
+[26.12.2019 14:16:09] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:16:10] [
+26.12.2019 14:16:10 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:16:10] [
+26.12.2019 14:16:10 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:16:10] [
+26.12.2019 14:16:10 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:16:10] [
+26.12.2019 14:16:10 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:16:10] [
+26.12.2019 14:16:10 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:16:10] [
+26.12.2019 14:16:10 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:16:10] [
+26.12.2019 14:16:10 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:16:10] [
+26.12.2019 14:16:10 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:16:24] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:17:18] [Thread started, processing..] 
+[26.12.2019 14:17:18] [Start program] 
+[26.12.2019 14:17:18] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:17:19] [
+26.12.2019 14:17:19 Update count: 1, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:17:19] [
+26.12.2019 14:17:19 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:17:19] [
+26.12.2019 14:17:19 Update count: 1, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:17:19] [
+26.12.2019 14:17:19 Update count: 1, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:17:19] [
+26.12.2019 14:17:19 Update count: 1, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:17:19] [
+26.12.2019 14:17:19 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:17:19] [
+26.12.2019 14:17:19 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:17:19] [
+26.12.2019 14:17:19 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:17:22] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:19:10] [Thread started, processing..] 
+[26.12.2019 14:19:10] [Start program] 
+[26.12.2019 14:19:10] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:19:11] [
+26.12.2019 14:19:11 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:19:11] [
+26.12.2019 14:19:11 Update count: 0, BarCode: 12214945, TypeGoods: LYM, TypeGoods: ^, Value1: 1.34, Value2: 10] 
+[26.12.2019 14:19:11] [
+26.12.2019 14:19:11 Update count: 0, BarCode: 12214945, TypeGoods: NEU, TypeGoods: ^, Value1: 2.13, Value2: 10] 
+[26.12.2019 14:19:11] [
+26.12.2019 14:19:11 Update count: 0, BarCode: 12214945, TypeGoods: MON, TypeGoods: ^, Value1: 0.42, Value2: 10] 
+[26.12.2019 14:19:11] [
+26.12.2019 14:19:11 Update count: 0, BarCode: 12214945, TypeGoods: EOS, TypeGoods: ^, Value1: 0.15, Value2: 10] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: BAS, TypeGoods: ^, Value1: 0.12, Value2: 10] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 1, BarCode: 12214945, TypeGoods: HGB, TypeGoods: g, Value1: +, Value2: 213] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: HCT, TypeGoods: %, Value1: *, Value2: 61.4] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: MCV, TypeGoods: fL[76.0, Value1: +, Value2: 103.9] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: MCH, TypeGoods: pg[27.0, Value1: +, Value2: 36.0] 
+[26.12.2019 14:19:12] [
+26.12.2019 14:19:12 Update count: 0, BarCode: 12214945, TypeGoods: MCHC, TypeGoods: /, Value1: 346, Value2: g] 
+[26.12.2019 14:19:13] [
+26.12.2019 14:19:13 Update count: 0, BarCode: 12214945, TypeGoods: RDWc, TypeGoods: [0.0, Value1: 15.4, Value2: %] 
+[26.12.2019 14:19:13] [
+26.12.2019 14:19:13 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:20:27] [Thread started, processing..] 
+[26.12.2019 14:20:27] [Start program] 
+[26.12.2019 14:20:27] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:20:28] [
+26.12.2019 14:20:28 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:20:28] [
+26.12.2019 14:20:28 Update count: 0, BarCode: 12214945, TypeGoods: MON, TypeGoods: ^, Value1: 0.42, Value2: 10] 
+[26.12.2019 14:20:28] [
+26.12.2019 14:20:28 Update count: 0, BarCode: 12214945, TypeGoods: LYM, TypeGoods: ^, Value1: 1.34, Value2: 10] 
+[26.12.2019 14:20:28] [
+26.12.2019 14:20:28 Update count: 0, BarCode: 12214945, TypeGoods: NEU, TypeGoods: ^, Value1: 2.13, Value2: 10] 
+[26.12.2019 14:20:28] [
+26.12.2019 14:20:28 Update count: 0, BarCode: 12214945, TypeGoods: EOS, TypeGoods: ^, Value1: 0.15, Value2: 10] 
+[26.12.2019 14:20:28] [
+26.12.2019 14:20:28 Update count: 0, BarCode: 12214945, TypeGoods: BAS, TypeGoods: ^, Value1: 0.12, Value2: 10] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 1, BarCode: 12214945, TypeGoods: HGB, TypeGoods: g, Value1: +, Value2: 213] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: HCT, TypeGoods: %, Value1: *, Value2: 61.4] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: MCV, TypeGoods: fL[76.0, Value1: +, Value2: 103.9] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: MCH, TypeGoods: pg[27.0, Value1: +, Value2: 36.0] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: MCHC, TypeGoods: /, Value1: 346, Value2: g] 
+[26.12.2019 14:20:29] [
+26.12.2019 14:20:29 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:20:34] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 14:21:41] [Thread started, processing..] 
+[26.12.2019 14:21:41] [Start program] 
+[26.12.2019 14:21:41] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 0, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 0, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 0, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 1, BarCode: 12214945, TypeGoods: HGB, TypeGoods: g, Value1: +, Value2: 213] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 0, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 14:21:42] [
+26.12.2019 14:21:42 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 14:21:53] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 15:03:48] [Thread started, processing..] 
+[26.12.2019 15:03:48] [Start program] 
+[26.12.2019 15:03:48] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 0, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 0, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 0, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 0, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 1, BarCode: 12214945, TypeGoods: HGB, TypeGoods: g, Value1: +, Value2: 213] 
+[26.12.2019 15:03:49] [
+26.12.2019 15:03:49 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 15:05:11] [Exiting system due to external CTRL-C, or process kill, or shutdown] 
+[26.12.2019 15:48:11] [Thread started, processing..] 
+[26.12.2019 15:48:11] [Start program] 
+[26.12.2019 15:48:11] [ConnectionIni:172.16.0.4/3051:terra] 
+[26.12.2019 15:48:12] [
+26.12.2019 15:48:12 Update count: 1, BarCode: 12214945, TypeGoods: WBC, TypeGoods: ^, Value1: 4.16, Value2: 10] 
+[26.12.2019 15:48:12] [
+26.12.2019 15:48:12 Update count: 0, BarCode: 12214945, TypeGoods: LY%, TypeGoods: [19.0, Value1: 32.3, Value2: %] 
+[26.12.2019 15:48:12] [
+26.12.2019 15:48:12 Update count: 0, BarCode: 12214945, TypeGoods: NE%, TypeGoods: [40.0, Value1: 51.1, Value2: %] 
+[26.12.2019 15:48:12] [
+26.12.2019 15:48:12 Update count: 0, BarCode: 12214945, TypeGoods: EO%, TypeGoods: [0.0, Value1: 3.5, Value2: %] 
+[26.12.2019 15:48:12] [
+26.12.2019 15:48:12 Update count: 0, BarCode: 12214945, TypeGoods: MO%, TypeGoods: [3.0, Value1: 10.1, Value2: %] 
+[26.12.2019 15:48:12] [
+26.12.2019 15:48:12 Update count: 1, BarCode: 12214945, TypeGoods: RBC, TypeGoods: 10, Value1: +, Value2: 5.91] 
+[26.12.2019 15:48:12] [
+26.12.2019 15:48:12 Update count: 1, BarCode: 12214945, TypeGoods: HGB, TypeGoods: g, Value1: +, Value2: 213] 
+[26.12.2019 15:48:13] [
+26.12.2019 15:48:13 Update count: 0, BarCode: 12214945, TypeGoods: BA%, TypeGoods: [0.0, Value1: +3.0, Value2: %] 
+[26.12.2019 15:48:13] [
+26.12.2019 15:48:13 Update count: 0, BarCode: 12214945, TypeGoods: PLT, TypeGoods: 10, Value1: -, Value2: 111] 
+[26.12.2019 15:48:21] [Exiting system due to external CTRL-C, or process kill, or shutdown] 

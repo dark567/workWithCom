@@ -1,0 +1,23 @@
+C:\Users\admin\source\repos\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+C:\Users\admin\source\repos\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+C:\Users\admin\source\repos\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+C:\Users\admin\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csprojAssemblyReference.cache
+C:\Users\admin\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CoreCompileInputs.cache
+C:\Users\admin\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+C:\Users\admin\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
+C:\Users\sergey\source\repos\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+C:\Users\sergey\source\repos\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+C:\Users\sergey\source\repos\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+C:\Users\sergey\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csprojAssemblyReference.cache
+C:\Users\sergey\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CoreCompileInputs.cache
+C:\Users\sergey\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+C:\Users\sergey\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csprojAssemblyReference.cache
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CoreCompileInputs.cache
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\bin\Debug\FirebirdSql.Data.FirebirdClient.dll
+D:\project\си шарп\COM\ConsoleApplication3\poligon\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CopyComplete

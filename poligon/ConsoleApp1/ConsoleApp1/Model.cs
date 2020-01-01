@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication3
+namespace ConsoleApp1
 {
     public class Model
     {
@@ -18,6 +18,8 @@ namespace ConsoleApplication3
         public string Value01 { get; set; }
 
         public string Value02 { get; set; }
+
+
         public string Query { get; set; }
 
         //public string Value03 { get; set; }
@@ -40,6 +42,5 @@ namespace ConsoleApplication3
             //this.Value03 = value03;
             //this.Value04 = value04;
         }
-
     }
 }
