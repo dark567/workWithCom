@@ -64,7 +64,7 @@ namespace ConsoleApplication3
         public static string TypeAnaliz = "G";
         public static string VerApp = $"ver: {typeof(Program).Assembly.GetName().Version.ToString()}";
 
-        static SerialPort mySerialPort = new SerialPort(GetValueIni("CC-4000", "COM_Port") ?? "COM3");
+        static SerialPort mySerialPort = new SerialPort(GetValueIni("CC-4000", "COM_Port") ?? "COM1");
         public static string path_db;
         public static int countLineC = 0;
         public static int countLineG = 0;
@@ -498,9 +498,9 @@ namespace ConsoleApplication3
 
         private static void CreateModelG(string lineAllG)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"{DateTime.Now} CreateModelG - {lineAllG}");
-            Console.ForegroundColor = ConsoleColor.White;
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine($"{DateTime.Now} CreateModelG - {lineAllG}");
+            //Console.ForegroundColor = ConsoleColor.White;
 
             if (!string.IsNullOrEmpty(lineAllG) /*&& (countLine != 0)*/)
             {
@@ -519,13 +519,19 @@ namespace ConsoleApplication3
                 {
                     model = new Model(type: substringsCharAll[0], code: BarCode, goods: substringsCharAll[0], typeGoods: substringsCharAll[3], value01: substringsCharAll[1], value02: substringsCharAll[2]/*, value03: substringsCharAll[6], value04: substringsCharAll[7]*/);
 
-                    Console.WriteLine($"type[0]: {substringsCharAll[0]}, code: {BarCode}, goods[0]: {substringsCharAll[0]}, typeGoods[3]: {substringsCharAll[3]}, value01[1]: {substringsCharAll[1]}, value02[1]: {substringsCharAll[2]}");
+                    Console.WriteLine($"Extensions.InContVerTwo - type[0]: {substringsCharAll[0]}, code: {BarCode}, goods[0]: {substringsCharAll[0]}, typeGoods[3]: {substringsCharAll[3]}, value01[1]: {substringsCharAll[1]}, value02[1]: {substringsCharAll[2]}");
                 }
 
                 if (model.Type != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine($"\n[nah&&&& - 0]{model.Type} [barCode1]{model.Code} [type ? - 2]{model.Goods} [nah??????3]{model.TypeGoods} [value01 - 4]{model.Value01} [value02 - 5]{model.Value02}");
+                    Console.WriteLine($"\nCreateModelG - [model.Type]{model.Type} [barCode1]{model.Code} [model.Goods]{model.Goods} [model.TypeGoods]{model.TypeGoods} [value01 - 4]{model.Value01} [value02 - 5]{model.Value02}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nCreateModelG(null) - [model.Type]{model.Type} [barCode1]{model.Code} [model.Goods]{model.Goods} [model.TypeGoods]{model.TypeGoods} [value01 - 4]{model.Value01} [value02 - 5]{model.Value02}");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
 
@@ -533,19 +539,13 @@ namespace ConsoleApplication3
 
                 string query = QueryGet(model)?.Query; //!!!
 
-                if (!string.IsNullOrEmpty(query) && query != "Query NULL") UpdateRowBd_(model); //!!! ver2 потом включить
+                // if (!string.IsNullOrEmpty(query) && query != "Query NULL") UpdateRowBd_(model); //!!! ver2 
+                if (!string.IsNullOrEmpty(query) && query != "Query NULL") UpdateRowBdThread(model); //!!! ver3 потом включить
 
                 if (!string.IsNullOrEmpty(query) && query != "Query NULL")
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(query);
-                    Log.Write(query);
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("query NULL - " + query);
                     Log.Write(query);
                     Console.ForegroundColor = ConsoleColor.White;
                 }
@@ -599,9 +599,21 @@ namespace ConsoleApplication3
         /// <param name="query"></param>
         static async void UpdateRowBd_(Model query)
         {
-            //Console.WriteLine("Начало метода async");
+            Console.WriteLine("Начало метода async");
             await Task.Run(() => UpdateRowBd(query)); // выполняется асинхронно
-            // Console.WriteLine("Конец метода async");
+            Console.WriteLine("Конец метода async");
+        }
+
+        /// <summary>
+        ///  метод запускающий метод изменения данных в бд
+        /// </summary>
+        /// <param name="query"></param>
+        static void UpdateRowBdThread(Model query)
+        {
+            //Console.WriteLine("Начало метода myThread");
+            Thread myThread = new Thread(new ParameterizedThreadStart(UpdateRowBdThread));
+            myThread.Start(query); 
+           // Console.WriteLine("Конец метода myThread");
         }
 
         /// <summary>
@@ -613,10 +625,10 @@ namespace ConsoleApplication3
             //Console.WriteLine($"UpdateRowBd");
             //Log.Write($"UpdateRowBd)");
 
-            //Console.WriteLine($"UpdateRowBd - {QueryGet(query).Query}");
+            Console.WriteLine($"UpdateRowBd - {QueryGet(query).Query}");
             //Log.Write($"UpdateRowBd - {QueryGet(query).Query}");
 
-            Thread.Sleep(250);
+            //Thread.Sleep(250);
 
             FbConnection conn = GetConnection();
             FbTransaction fbt = conn.BeginTransaction();
@@ -652,7 +664,8 @@ namespace ConsoleApplication3
 
                     Console.ForegroundColor = ConsoleColor.White;
 
-                    Log.Write($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+                    //Log.Write($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+                    Log.WriteLog($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
 
                     fbt.Commit();
                 }
@@ -661,7 +674,8 @@ namespace ConsoleApplication3
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
-                Log.Write_ex(ex);
+                //Log.Write_ex(ex);
+                Log.WriteLog(ex.Message);
                 Console.ForegroundColor = ConsoleColor.White;
                 fbt.Rollback();
             }
@@ -694,6 +708,116 @@ namespace ConsoleApplication3
             // Console.WriteLine($"{query}");
         }
 
+        /// <summary>
+        /// внесение данных в бд
+        /// </summary>
+        /// <param name="query"></param>
+        private static void UpdateRowBdThread(object x)
+        {
+            Model query = (Model)x;
+
+            //Console.WriteLine($"UpdateRowBd");
+            //Log.Write($"UpdateRowBd)");
+
+            // Console.WriteLine($"UpdateRowBd - {QueryGet(query).Query}");
+            //Log.Write($"UpdateRowBd - {QueryGet(query).Query}");
+
+            //Thread.Sleep(250);
+
+            //FbConnection conn = GetConnection();
+            //FbTransaction fbt = conn.BeginTransaction();
+            //try
+            //{
+            //    // string queryBd = TypeAnaliz == "G" ? QueryGetGem(query).Query : QueryGetC(query).Query;
+
+            //    string queryBd = query.Query; // ver2
+
+            //    using (FbCommand cmd = new FbCommand(queryBd, conn))
+            //    {
+            //        cmd.Transaction = fbt;
+            //        int res = cmd.ExecuteNonQuery();
+
+            //        // Console.ForegroundColor = ConsoleColor.Yellow;
+            //        //if (res == 0)
+            //        //{
+            //        //    Beep(1, query);
+            //        //    Console.ForegroundColor = ConsoleColor.Red;
+            //        //}
+
+            //        if (res == 0)
+            //        {
+            //            Console.ForegroundColor = ConsoleColor.Red;
+            //            Console.WriteLine($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+            //            Beep(1, query);
+            //        }
+            //        else
+            //        {
+            //            Console.ForegroundColor = ConsoleColor.Yellow;
+            //            Console.WriteLine($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+            //        }
+
+            //        Console.ForegroundColor = ConsoleColor.White;
+
+            //        Log.Write($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+            //        //Log.WriteLog($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+
+            //        fbt.Commit();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.ForegroundColor = ConsoleColor.Red;
+            //    Console.WriteLine(ex.Message);
+            //    Log.Write_ex(ex);
+            //    //Log.WriteLog(ex.Message);
+            //    Console.ForegroundColor = ConsoleColor.White;
+            //    fbt.Rollback();
+            //}
+            //finally
+            //{
+            //    // fbt.Commit();
+            //    conn.Close();
+            //}
+
+            OdbcCommand command = new OdbcCommand(query.Query);
+
+            using (OdbcConnection connection = new OdbcConnection(GetValueIni("Connection", "dbname")))
+            {
+                command.Connection = connection;
+                try
+                {
+                    connection.Open();
+                    int res = command.ExecuteNonQuery();
+
+                    if (res == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+                        Logger.WriteLog($"Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}", 0, "res == 0");
+                        Beep(1, query);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+                        Logger.WriteLog($"Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}", 1, "res == 1");
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    //Console.WriteLine($"UpdateRow: SUCCESS - {res.ToString()}\n", "res");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"UpdateRow: update fail: {ex.Message}\n", "ex");
+                }
+                // The connection is automatically closed at 
+                // the end of the Using block.
+            }
+
+            // Console.WriteLine($"{query}");
+        }
+
         private static string getBarCodeCorrect(string barCode)
         {
             return barCode.Substring(3); ;
@@ -713,8 +837,8 @@ namespace ConsoleApplication3
                     {
                         Type = model.Type,
                         Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                     "d.result = '" + model.Value01 + "', \n" +
-              "d.result_text = '" + model.Value01 + "', \n" +
+                     "d.result = '" + GetValue(ParseFloat(model.Value01), model.Goods) + "', \n" +
+              "d.result_text = '" + GetValue(ParseFloat(model.Value01), model.Goods) + "', \n" +
               "d.hardware_date_updated = current_timestamp, " +
               "d.hardware_info = ('GEMATOL') \n" +
               "where ID = (select R.ID  \n" +
@@ -725,7 +849,7 @@ namespace ConsoleApplication3
               "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
                "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
               "and (R.CODE_NAME = cast(  \n" +
-              "('" + model.Goods + "') as MIDDLE_NAME))  \n" +
+              "('" + GetGoods(model.Goods) + "') as MIDDLE_NAME))  \n" +
               "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                     });
 
@@ -737,8 +861,8 @@ namespace ConsoleApplication3
                     {
                         Type = model.Type,
                         Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-                     "d.result = '" + model.Value02 + "', \n" +
-              "d.result_text = '" + model.Value02 + "', \n" +
+                     "d.result = '" + GetValue(ParseFloat(model.Value02), model.Goods) + "', \n" +
+              "d.result_text = '" + GetValue(ParseFloat(model.Value02), model.Goods) + "', \n" +
               "d.hardware_date_updated = current_timestamp, " +
               "d.hardware_info = ('GEMATOL') \n" +
               "where ID = (select R.ID  \n" +
@@ -749,7 +873,7 @@ namespace ConsoleApplication3
               "where (R.HD_ID = D.ID) and(D.DATE_DONE is null) and(D.IS_REFUSE = 0)  \n" +
                "and (D.BULB_NUM_CODE = cast('" + model.Code + "' as NAME))  \n" +
               "and (R.CODE_NAME = cast(  \n" +
-              "('" + model.Goods + "') as MIDDLE_NAME))  \n" +
+              "('" + GetGoods(model.Goods) + "') as MIDDLE_NAME))  \n" +
               "and((D.DIC_NO_OPPORT_TO_RES_ID is null) or(N.IS_IN_WORK = 1)))"
                     });
 
@@ -764,6 +888,39 @@ namespace ConsoleApplication3
             return query;
 
         }
+
+        private static double GetValue(float v, string goods)
+        {
+            List<string> Goods = new List<string> { "WBC", /*"LYM", "NEU", "MON", "EOS", "BAS", */"LY%", "NE%", "MO%", "EO%", "BA%", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "MPV", "PLT" };
+            if (Goods.Contains(goods))
+            {
+                if (goods == "LY%") return Math.Round(v);
+                if (goods == "NE%") return Math.Round(v);
+                if (goods == "MO%") return Math.Round(v);
+                if (goods == "EO%") return Math.Round(v);
+                if (goods == "BA%") return Math.Round(v);
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+                return Double.Parse(v.ToString());
+            }
+            else return 0;
+        }
+
+        private static string GetGoods(string goods)
+        {
+            List<string> Goods = new List<string> { "WBC", /*"LYM", "NEU", "MON", "EOS", "BAS", */"LY%", "NE%", "MO%", "EO%", "BA%", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "MPV", "PLT" };
+            if (Goods.Contains(goods))
+            {
+                if (goods == "LY%") goods = "LYM%";
+                if (goods == "NE%") goods = "GRA%";
+                if (goods == "MO%") goods = "MON%";
+                if (goods == "EO%") goods = "EOZ%";
+                if (goods == "BA%") goods = "BAZ%";
+                return goods;
+            }
+            else return "n/a";
+        }
+
+
 
         private static QueryModel QueryGetC(Model model)
         {
@@ -978,7 +1135,7 @@ namespace ConsoleApplication3
         //                {
         //                    Type = model.Type,
         //                    Query = "update jor_results_dt d set d.IS_OUT_OF_NORM = 0, \n" +
-        //                 "d.result = '" + Math.Round(ParseFloat(model.Value01)) + "', \n" +
+        //            "d.result = '" + Math.Round(ParseFloat(model.Value01)) + "', \n" +
         //          "d.result_text = '" + Math.Round(ParseFloat(model.Value01)) + "', \n" +
         //          "d.hardware_date_updated = current_timestamp, " +
         //          "d.hardware_info = ('GEMATOL') \n" +
@@ -1417,6 +1574,7 @@ namespace ConsoleApplication3
 
         private static bool IsFloat(string val)
         {
+
             //return Double.TryParse(val, out _);
             return float.TryParse(val, NumberStyles.Any, new CultureInfo("en-US"), out _);
 
@@ -1424,9 +1582,7 @@ namespace ConsoleApplication3
 
         private static float ParseFloat(string val)
         {
-            //return Double.TryParse(val, out _);
             return float.Parse(val, NumberStyles.Any, new CultureInfo("en-US"));
-
         }
 
 
