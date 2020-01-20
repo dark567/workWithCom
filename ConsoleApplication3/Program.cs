@@ -6,11 +6,7 @@ using System.Data;
 using System.Data.Odbc;
 using System.Globalization;
 using System.IO.Ports;
-using System.Linq;
-using System.Media;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -79,6 +75,9 @@ namespace ConsoleApplication3
 
         public static void Main(string[] args)
         {
+
+            Form1_Load();
+
             // Some biolerplate to react to close window event, CTRL-C, kill, etc
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
@@ -94,15 +93,41 @@ namespace ConsoleApplication3
             }
         }
 
+        private static void Form1_Load()
+        {
+            
+
+            try
+            {
+                CryptoClass crypto = new CryptoClass();
+                //if (!crypto.Form_LoadTrue()) Close();
+
+                string date = crypto.GetDecodeKey("keyfile.dat").Substring(crypto.GetDecodeKey("keyfile.dat").IndexOf("|") + 1);
+
+                Logger.WriteLog(date, 0, "res == 0");
+
+                if (DateTime.Parse(date).AddDays(1) <= DateTime.Now) Close();
+                Console.Title = "ComRead:" + VerApp + "......." + date;
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex.Message, 0, "res == 0");
+            }
+            
+        }
+
+        private static void Close()
+        {
+            //allow main to run off
+            Environment.Exit(0);
+        }
+
         public void Start()
         {
             // start a thread and start doing some processing
             Console.WriteLine("Thread started, processing..");
             Log.Write($"Thread started, processing..");
-
-            Console.Title = "ComRead:" + VerApp;
             First_Load();
-
             Console.WriteLine($"{DateTime.Now} Connection bd - {(CheckDbConnection() == true ? "Open" : "Closed")}");
             Log.Write($"Connection bd - { (CheckDbConnection() == true ? "Open" : "Closed")}");
 
@@ -612,8 +637,8 @@ namespace ConsoleApplication3
         {
             //Console.WriteLine("Начало метода myThread");
             Thread myThread = new Thread(new ParameterizedThreadStart(UpdateRowBdThread));
-            myThread.Start(query); 
-           // Console.WriteLine("Конец метода myThread");
+            myThread.Start(query);
+            // Console.WriteLine("Конец метода myThread");
         }
 
         /// <summary>
