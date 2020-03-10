@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExchangeDataCom
+namespace Gematolog
 {
     public class Log
     {
@@ -15,7 +15,7 @@ namespace ExchangeDataCom
             try
             {
                 // Путь .\\Log
-               // string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
+                // string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
                 if (!Directory.Exists(pathToLog))
                     Directory.CreateDirectory(pathToLog); // Создаем директорию, если нужно
                 string filename = Path.Combine(pathToLog, string.Format("{0}_{1:dd.MM.yyy}.log",
@@ -37,7 +37,7 @@ namespace ExchangeDataCom
             try
             {
                 // Путь .\\Log
-               // string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
+                // string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
                 if (!Directory.Exists(pathToLog))
                     Directory.CreateDirectory(pathToLog); // Создаем директорию, если нужно
                 string filename = Path.Combine(pathToLog, string.Format("{0}_Error_{1:dd.MM.yyy}.log",

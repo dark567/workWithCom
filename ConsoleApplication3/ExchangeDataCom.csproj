@@ -7,8 +7,8 @@
     <ProjectGuid>{42AA0578-D542-4C60-B628-6E7474C961D5}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConsoleApplication3</RootNamespace>
-    <AssemblyName>ConsoleApplication3</AssemblyName>
+    <RootNamespace>ExchangeDataCom</RootNamespace>
+    <AssemblyName>ExchangeDataCom</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -62,7 +62,7 @@
     <ApplicationIcon>Main.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>ConsoleApplication3.Program</StartupObject>
+    <StartupObject>ExchangeDataCom.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FirebirdSql.Data.FirebirdClient, Version=7.1.1.0, Culture=neutral, PublicKeyToken=3750abcc3150b00c, processorArchitecture=MSIL">
@@ -112,6 +112,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Main.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gematolog\Gematolog.csproj">
+      <Project>{7b79f044-4259-4c86-af6d-a0969f261627}</Project>
+      <Name>Gematolog</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

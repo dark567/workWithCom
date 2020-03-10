@@ -1,0 +1,10 @@
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\set.ini
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\ExchangeDataCom.exe.config
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\ExchangeDataCom.exe
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\ExchangeDataCom.pdb
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\bin\Debug\FirebirdSql.Data.FirebirdClient.dll
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ExchangeDataCom.csproj.CoreCompileInputs.cache
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ExchangeDataCom.csproj.CopyComplete
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ExchangeDataCom.exe
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ExchangeDataCom.pdb
+D:\project\си шарп\COM\ConsoleApplication3\ConsoleApplication3\obj\Debug\ExchangeDataCom.csprojAssemblyReference.cache

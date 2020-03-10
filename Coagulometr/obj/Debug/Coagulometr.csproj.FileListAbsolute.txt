@@ -1,0 +1,6 @@
+D:\project\си шарп\COM\ConsoleApplication3\Coagulometr\bin\Debug\Coagulometr.dll
+D:\project\си шарп\COM\ConsoleApplication3\Coagulometr\bin\Debug\Coagulometr.pdb
+D:\project\си шарп\COM\ConsoleApplication3\Coagulometr\obj\Debug\Coagulometr.csproj.CoreCompileInputs.cache
+D:\project\си шарп\COM\ConsoleApplication3\Coagulometr\obj\Debug\Coagulometr.dll
+D:\project\си шарп\COM\ConsoleApplication3\Coagulometr\obj\Debug\Coagulometr.pdb
+D:\project\си шарп\COM\ConsoleApplication3\Coagulometr\obj\Debug\Coagulometr.csprojAssemblyReference.cache

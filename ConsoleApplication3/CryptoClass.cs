@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ConsoleApplication3
+namespace ExchangeDataCom
 {
     /*Класс защиты приложения, 
     * запускается при загрузке формы,

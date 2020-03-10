@@ -1,0 +1,6 @@
+D:\project\си шарп\COM\ConsoleApplication3\Gematolog\bin\Debug\Gematolog.dll
+D:\project\си шарп\COM\ConsoleApplication3\Gematolog\bin\Debug\Gematolog.pdb
+D:\project\си шарп\COM\ConsoleApplication3\Gematolog\obj\Debug\Gematolog.csproj.CoreCompileInputs.cache
+D:\project\си шарп\COM\ConsoleApplication3\Gematolog\obj\Debug\Gematolog.dll
+D:\project\си шарп\COM\ConsoleApplication3\Gematolog\obj\Debug\Gematolog.pdb
+D:\project\си шарп\COM\ConsoleApplication3\Gematolog\obj\Debug\Gematolog.csprojAssemblyReference.cache

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace ConsoleApplication3
+namespace ExchangeDataCom
 {
     //Класс для чтения/записи INI-файлов
     public class INIManager
