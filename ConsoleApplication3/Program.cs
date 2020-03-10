@@ -455,8 +455,8 @@ namespace ExchangeDataCom
                     //else lineAll = null;
                     lineAllC = line;
 
+                    Log.Write_res($"[{countLineC}] - {lineAllC}");
                     CreateModelC(lineAllC); //!!!
-
                 }
             }
             #endregion
@@ -699,7 +699,7 @@ namespace ExchangeDataCom
                     Console.ForegroundColor = ConsoleColor.White;
 
                     //Log.Write($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
-                    Log.WriteLog($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+
 
                     fbt.Commit();
                 }
@@ -839,6 +839,7 @@ namespace ExchangeDataCom
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+                            Logger.WriteLog($"{queryBd}", 0, "res == 0");
                             Logger.WriteLog($"Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}", 0, "res == 0");
                             Beep(1, query);
                         }
@@ -846,10 +847,13 @@ namespace ExchangeDataCom
                         {
                             Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.WriteLine($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
+                            Logger.WriteLog($"{queryBd}", 1, "res == 1");
                             Logger.WriteLog($"Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}", 1, "res == 1");
                         }
 
                         Console.ForegroundColor = ConsoleColor.White;
+
+                        //Log.WriteLog($"\n{DateTime.Now} Update count: {res}, BarCode: {query.Code}, TypeGoods: {query.Goods}, TypeGoods: {query.TypeGoods}, Value1: {query.Value01}, Value2: {query.Value02}");
 
                         //Console.WriteLine($"UpdateRow: SUCCESS - {res.ToString()}\n", "res");
                     }
