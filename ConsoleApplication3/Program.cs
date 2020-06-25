@@ -941,7 +941,7 @@ namespace ExchangeDataCom
 
         private static double GetValue(float v, string goods)
         {
-            List<string> Goods = new List<string> { "WBC", /*"LYM", "NEU", "MON", "EOS", "BAS", */"LY%", "NE%", "MO%", "EO%", "BA%", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "MPV", "PLT" };
+            List<string> Goods = new List<string> { "WBC", /*"LYM", "NEU", "MON", "EOS", "BAS", */"LY%", "NE%", "MO%", "EO%", "BA%", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "MPV", "PLT", "RDWc", "PDWc", "PCT" };
             if (Goods.Contains(goods))
             {
                 if (goods == "LY%") return Math.Round(v);
@@ -957,7 +957,7 @@ namespace ExchangeDataCom
 
         private static string GetGoods(string goods)
         {
-            List<string> Goods = new List<string> { "WBC", /*"LYM", "NEU", "MON", "EOS", "BAS", */"LY%", "NE%", "MO%", "EO%", "BA%", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "MPV", "PLT" };
+            List<string> Goods = new List<string> { "WBC", /*"LYM", "NEU", "MON", "EOS", "BAS", */"LY%", "NE%", "MO%", "EO%", "BA%", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "MPV", "PLT", "RDWc", "PDWc", "PCT" };
             if (Goods.Contains(goods))
             {
                 if (goods == "LY%") goods = "LYM%";
